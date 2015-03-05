@@ -1,0 +1,10 @@
+/target
+/local
+
+# IDEs
+/.*
+!.gitignore
+/nbproject
+/*.ipr
+/*.iws
+/*.iml

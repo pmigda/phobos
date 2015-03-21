@@ -3,7 +3,6 @@ package pl.treefrog.phobos.core.processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.IProcessingNode;
-import pl.treefrog.phobos.core.api.IExecutor;
 import pl.treefrog.phobos.core.message.Message;
 import pl.treefrog.phobos.core.state.context.ProcessingContext;
 import pl.treefrog.phobos.exception.PhobosAssert;
@@ -19,13 +18,13 @@ import pl.treefrog.phobos.exception.PlatformException;
 /**
  * Handles base processing logic (provided through executor)
  */
-public class BaseProcessor extends AbstractProcessor {
+public class PhaseProcessor extends AbstractProcessor {
 
-    private static final Logger log = LoggerFactory.getLogger(BaseProcessor.class);
+    private static final Logger log = LoggerFactory.getLogger(PhaseProcessor.class);
 
-    protected IExecutor executor;
+    protected IProcessorPhaseListener processorPhaseListener;
 
-    public BaseProcessor(String processorId) {
+    public PhaseProcessor(String processorId) {
         super(processorId);
     }
 
@@ -35,27 +34,32 @@ public class BaseProcessor extends AbstractProcessor {
 
         log.info("[" + parentProcNode.getNodeName() + "][" + processorId + "] Initializing base processor");
 
-        PhobosAssert.assertNotNull("Executor is required for processing", executor);
+        PhobosAssert.assertNotNull("ChainPhaseListener is required for processing", processorPhaseListener);
 
-        if (outputAgent != null &&
-                !outputAgent.checkChannelsRegistered(executor.getRequiredChannelsIds())) {
-            throw new RuntimeException("No required channels registered in outputAgent: " + executor.getRequiredChannelsIds().toString());
+        if (processorPhaseListener != null && outputAgent != null &&
+                !outputAgent.checkChannelsRegistered(processorPhaseListener.getRequiredChannelsIds())) {
+            throw new RuntimeException("No required channels registered in outputAgent: " + processorPhaseListener.getRequiredChannelsIds().toString());
         }
 
     }
 
     @Override
     public void processMessage(Message message, ProcessingContext context) throws PlatformException {
-        if (executor != null) {
-            executor.processMessage(message, outputAgent, context);
-        } else {
-            log.error("[" + parentProcNode.getNodeName() + "][" + processorId + "] No executor in place while processing message");
+
+        if (processorPhaseListener != null) {
+            processorPhaseListener.preProcessPhase(message, context, outputAgent);
         }
+
         forwardMessage(message, context);
+
+        if (processorPhaseListener != null) {
+            processorPhaseListener.postProcessPhase(message, context, outputAgent);
+        }
+
     }
 
     //getters & setters
-    public void setExecutor(IExecutor executor) {
-        this.executor = executor;
+    public void setProcessorPhaseListener(IProcessorPhaseListener processorPhaseListener) {
+        this.processorPhaseListener = processorPhaseListener;
     }
 }

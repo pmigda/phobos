@@ -1,11 +1,11 @@
 package pl.treefrog.phobos.core.channel;
 
-import pl.treefrog.phobos.core.ILifecycle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.treefrog.phobos.core.IComponentLifecycle;
 import pl.treefrog.phobos.core.IProcessingNode;
 import pl.treefrog.phobos.exception.PhobosAssert;
 import pl.treefrog.phobos.exception.PlatformException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,7 +23,7 @@ import java.util.Map;
  * ChannelSet is a container for channels, it simply manages channels lifecycle.
  * As an generic container it can hold channels of the both input and output types
  */
-public class ChannelSet<T extends IChannel> implements IChannelSet<T>, ILifecycle {
+public class ChannelSet<T extends IChannel> implements IChannelSet<T>, IComponentLifecycle {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelSet.class);
 
@@ -35,7 +35,7 @@ public class ChannelSet<T extends IChannel> implements IChannelSet<T>, ILifecycl
         parentProcNode = nodeConfig;
         PhobosAssert.assertNotNull("Parent processing node must not be null", parentProcNode);
 
-        log.info("["+parentProcNode.getNodeName()+"]["+this.hashCode()+"] Initializing channel set");
+        log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] Initializing channel set");
 
         for (BaseChannel channel : channels.values()) {
             channel.init(nodeConfig);
@@ -43,8 +43,8 @@ public class ChannelSet<T extends IChannel> implements IChannelSet<T>, ILifecycl
     }
 
     @Override
-    public void start() {
-        log.info("["+parentProcNode.getNodeName()+"]["+this.hashCode()+"] starting channel set");
+    public void start() throws PlatformException {
+        log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] starting channel set");
 
         for (BaseChannel channel : channels.values()) {
             channel.start();
@@ -52,8 +52,8 @@ public class ChannelSet<T extends IChannel> implements IChannelSet<T>, ILifecycl
     }
 
     @Override
-    public void stop() {
-        log.info("["+parentProcNode.getNodeName()+"]["+this.hashCode()+"] stopping channel set");
+    public void stop() throws PlatformException {
+        log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] stopping channel set");
 
         for (BaseChannel channel : channels.values()) {
             channel.stop();
@@ -67,7 +67,7 @@ public class ChannelSet<T extends IChannel> implements IChannelSet<T>, ILifecycl
 
     @Override
     public List<String> getRegisteredChannelIds() {
-        return new LinkedList<String>(channels.keySet());
+        return new LinkedList<>(channels.keySet());
     }
 
     @Override

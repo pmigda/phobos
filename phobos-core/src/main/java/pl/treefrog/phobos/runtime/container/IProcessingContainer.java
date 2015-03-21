@@ -23,7 +23,7 @@ public interface IProcessingContainer {
 
     void init() throws PlatformException;
 
-    void start();
+    void start() throws PlatformException;
 
-    void stop();
+    void stop() throws PlatformException;
 }

@@ -3,8 +3,10 @@ package pl.treefrog.phobos.runtime;
 import pl.treefrog.phobos.core.ProcessingNode;
 import pl.treefrog.phobos.core.api.IExecutor;
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
-import pl.treefrog.phobos.core.msg.Message;
+import pl.treefrog.phobos.core.message.Message;
+import pl.treefrog.phobos.core.message.PayloadMessage;
 import pl.treefrog.phobos.core.processor.BaseProcessor;
+import pl.treefrog.phobos.core.state.context.ProcessingContext;
 import pl.treefrog.phobos.exception.PlatformException;
 import pl.treefrog.phobos.runtime.container.IProcessingContainer;
 import pl.treefrog.phobos.runtime.definition.TopologyDefGraph;
@@ -23,7 +25,7 @@ public class SyncTopologyRunner {
         TopologyDefGraph defGraph = parser.parse(Arrays.asList(new String[]{"-[InA]->(A)-[A2B]->(B)"}));
 
         //create runtime structure in single jvm container
-        TopologyBuilder syncTopoBuilder = new TopologyBuilder(new BaseInputAgentGenStrategy(),new BaseOutputAgentGenStrategy());
+        TopologyBuilder syncTopoBuilder = new TopologyBuilder(new BaseInputAgentGenStrategy(), new BaseOutputAgentGenStrategy());
         IProcessingContainer runtimeContainer = syncTopoBuilder.buildProcessingTopology(defGraph);
 
         //inject low level implementations
@@ -38,9 +40,9 @@ public class SyncTopologyRunner {
         BaseProcessor procA = new BaseProcessor("baseProcA");
         procA.setExecutor(new IExecutor() {
             @Override
-            public void processMessage(Message message, IOutputAgent outputAgent) {
-                System.out.println("Node A: "+message.id);
-                outputAgent.sendMessage("A2B", message);
+            public void processMessage(Message message, IOutputAgent outputAgent, ProcessingContext context) throws PlatformException {
+                System.out.println("Node A: " + message.getId());
+                outputAgent.sendMessage("A2B", message, context);
             }
 
             @Override
@@ -50,15 +52,14 @@ public class SyncTopologyRunner {
         });
 
         nodeA.setProcessorInternal(procA);
-        tInA.setProcessor(procA);
 
         //processing node B
         ProcessingNode nodeB = runtimeContainer.getProcessingNode("B");
         BaseProcessor procB = new BaseProcessor("baseProcB");
         procB.setExecutor(new IExecutor() {
             @Override
-            public void processMessage(Message message, IOutputAgent outputAgent) {
-                System.out.println("Node B: "+message.id);
+            public void processMessage(Message message, IOutputAgent outputAgent, ProcessingContext context) {
+                System.out.println("Node B: " + message.getId());
             }
 
             @Override
@@ -68,13 +69,11 @@ public class SyncTopologyRunner {
         });
 
         nodeB.setProcessorInternal(procB);
-        tAB.setProcessor(procB);
 
         runtimeContainer.init();
         runtimeContainer.start();
 
-        Message msg = new Message();
-        msg.id = 666;
+        Message msg = new PayloadMessage(666);
 
         tInA.sendMessage(msg);
     }

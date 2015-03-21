@@ -1,13 +1,13 @@
 package pl.treefrog.phobos.core.channel.input;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.IProcessingNode;
 import pl.treefrog.phobos.core.channel.AbstractChannelAgent;
 import pl.treefrog.phobos.core.channel.IChannel;
-import pl.treefrog.phobos.core.processor.IProcessor;
+import pl.treefrog.phobos.core.handler.IMessageHandler;
 import pl.treefrog.phobos.exception.PhobosAssert;
 import pl.treefrog.phobos.exception.PlatformException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -19,16 +19,16 @@ public class InputAgent<C extends IChannel> extends AbstractChannelAgent<C> impl
 
     private static final Logger log = LoggerFactory.getLogger(InputAgent.class);
 
-    protected IProcessor processor;
+    protected IMessageHandler messageHandler;
 
     @Override
     public void init(IProcessingNode nodeConfig) throws PlatformException {
         super.init(nodeConfig);
 
-        log.info("["+parentProcNode.getNodeName()+"]["+this.hashCode()+"] Initializing input agent");
+        log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] Initializing input agent");
 
-        processor = nodeConfig.getProcessor();
-        PhobosAssert.assertNotNull("Processor must not be null for operation", processor);
+        messageHandler = nodeConfig.getMessageHandler();
+        PhobosAssert.assertNotNull("Message handler must not be null for operation", messageHandler);
     }
 
 }

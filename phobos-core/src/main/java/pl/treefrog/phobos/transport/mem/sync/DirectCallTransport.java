@@ -1,9 +1,9 @@
 package pl.treefrog.phobos.transport.mem.sync;
 
-import pl.treefrog.phobos.core.IProcessingNode;
 import pl.treefrog.phobos.core.api.ITransport;
-import pl.treefrog.phobos.core.msg.Message;
-import pl.treefrog.phobos.core.processor.IProcessor;
+import pl.treefrog.phobos.core.handler.IMessageHandler;
+import pl.treefrog.phobos.core.message.Message;
+import pl.treefrog.phobos.exception.PlatformException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -13,11 +13,11 @@ import pl.treefrog.phobos.core.processor.IProcessor;
  */
 public class DirectCallTransport implements ITransport {
 
-    private IProcessor processor;
+    private IMessageHandler messageHandler;
 
     @Override
-    public void init(IProcessingNode nodeConfig) {
-        //NOP
+    public void init(IMessageHandler messageHandler) {
+        this.messageHandler = messageHandler;
     }
 
     @Override
@@ -31,8 +31,8 @@ public class DirectCallTransport implements ITransport {
     }
 
     @Override
-    public void sendMessage(Message msg) {
-        processor.processMessage(msg);
+    public void sendMessage(Message msg) throws PlatformException {
+        messageHandler.processMessage(msg);
     }
 
     @Override
@@ -40,7 +40,4 @@ public class DirectCallTransport implements ITransport {
         throw new UnsupportedOperationException("Reading input is not applicable for sync transport");
     }
 
-    public void setProcessor(IProcessor processor) {
-        this.processor = processor;
-    }
 }

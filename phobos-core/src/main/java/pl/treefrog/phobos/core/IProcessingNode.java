@@ -2,6 +2,7 @@ package pl.treefrog.phobos.core;
 
 import pl.treefrog.phobos.core.channel.input.IInputAgent;
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
+import pl.treefrog.phobos.core.handler.IMessageHandler;
 import pl.treefrog.phobos.core.processor.IProcessor;
 
 /**
@@ -11,6 +12,8 @@ import pl.treefrog.phobos.core.processor.IProcessor;
  * license : See the "LICENSE.txt" file for the full terms of the license governing this code.
  */
 public interface IProcessingNode {
+
+    IMessageHandler getMessageHandler();
 
     IInputAgent getInputAgent();
 

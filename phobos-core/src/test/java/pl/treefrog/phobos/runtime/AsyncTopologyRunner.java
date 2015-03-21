@@ -3,8 +3,9 @@ package pl.treefrog.phobos.runtime;
 import pl.treefrog.phobos.core.ProcessingNode;
 import pl.treefrog.phobos.core.api.IExecutor;
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
-import pl.treefrog.phobos.core.msg.Message;
+import pl.treefrog.phobos.core.message.Message;
 import pl.treefrog.phobos.core.processor.BaseProcessor;
+import pl.treefrog.phobos.core.state.context.ProcessingContext;
 import pl.treefrog.phobos.exception.PlatformException;
 import pl.treefrog.phobos.runtime.container.IProcessingContainer;
 import pl.treefrog.phobos.runtime.definition.TopologyDefGraph;
@@ -23,7 +24,7 @@ public class AsyncTopologyRunner {
         TopologyDefGraph defGraph = parser.parse(Arrays.asList(new String[]{"(A)-[A2A]->(A)"}));
 
         //create runtime structure in single jvm container
-        TopologyBuilder asyncTopoBuilder = new TopologyBuilder(new AsyncInputAgentGenStrategy(),new BaseOutputAgentGenStrategy());
+        TopologyBuilder asyncTopoBuilder = new TopologyBuilder(new AsyncInputAgentGenStrategy(), new BaseOutputAgentGenStrategy());
         IProcessingContainer runtimeContainer = asyncTopoBuilder.buildProcessingTopology(defGraph);
 
         //provide low level implementations
@@ -36,15 +37,15 @@ public class AsyncTopologyRunner {
         BaseProcessor proc = new BaseProcessor("PrintOutProc");
         proc.setExecutor(new IExecutor() {
             @Override
-            public void processMessage(Message message, IOutputAgent outputAgent) {
-                System.out.println(message.id);
+            public void processMessage(Message message, IOutputAgent outputAgent, ProcessingContext context) throws PlatformException {
+                System.out.println(message.getId());
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                message.id++;
-                outputAgent.sendMessage("A2A", message);
+                message.setId(message.getId() + 1);
+                outputAgent.sendMessage("A2A", message, context);
             }
 
             @Override
@@ -58,8 +59,7 @@ public class AsyncTopologyRunner {
         runtimeContainer.init();
         runtimeContainer.start();
 
-        Message msg = new Message();
-        msg.id = 666;
+        Message msg = new Message(666);
 
         queueManager.getQueue("A2A").add(msg);
     }

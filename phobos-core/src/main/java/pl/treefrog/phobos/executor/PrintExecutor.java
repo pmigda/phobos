@@ -1,8 +1,9 @@
-package pl.treefrog.phobos.logic;
+package pl.treefrog.phobos.executor;
 
 import pl.treefrog.phobos.core.api.IExecutor;
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
-import pl.treefrog.phobos.core.msg.Message;
+import pl.treefrog.phobos.core.message.Message;
+import pl.treefrog.phobos.core.state.context.ProcessingContext;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,8 +21,8 @@ import java.util.List;
 public class PrintExecutor implements IExecutor {
 
     @Override
-    public void processMessage(Message message, IOutputAgent outputAgent) {
-        System.out.println(message.id);
+    public void processMessage(Message message, IOutputAgent outputAgent, ProcessingContext context) {
+        System.out.println(message.getId());
     }
 
     @Override

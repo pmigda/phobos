@@ -1,6 +1,6 @@
 package pl.treefrog.phobos.transport.mem.async;
 
-import pl.treefrog.phobos.core.msg.Message;
+import pl.treefrog.phobos.core.message.Message;
 
 import java.util.AbstractQueue;
 import java.util.HashMap;

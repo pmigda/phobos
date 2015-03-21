@@ -6,14 +6,15 @@ import pl.treefrog.phobos.core.channel.ChannelSet;
 import pl.treefrog.phobos.core.channel.input.async.AsyncInputAgent;
 import pl.treefrog.phobos.core.channel.input.async.AsyncInputChannel;
 import pl.treefrog.phobos.core.channel.input.async.IAsyncInputChannel;
+import pl.treefrog.phobos.core.channel.input.async.listener.RoundRobinListener;
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
 import pl.treefrog.phobos.core.channel.output.IOutputChannel;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputChannel;
-import pl.treefrog.phobos.core.msg.Message;
+import pl.treefrog.phobos.core.message.Message;
 import pl.treefrog.phobos.core.processor.BaseProcessor;
+import pl.treefrog.phobos.core.state.context.ProcessingContext;
 import pl.treefrog.phobos.exception.PlatformException;
-import pl.treefrog.phobos.listener.RoundRobinListener;
 import pl.treefrog.phobos.transport.mem.async.QueueManager;
 import pl.treefrog.phobos.transport.mem.async.QueueTransport;
 
@@ -26,7 +27,7 @@ public class AsyncRunner {
 
         //in memory queue based mom
         QueueManager queueManager = new QueueManager();
-        queueManager.createQueue("A2A",100);
+        queueManager.createQueue("A2A", 100);
 
         QueueTransport queTransport = new QueueTransport();
         queTransport.setQueManager(queueManager);
@@ -42,7 +43,7 @@ public class AsyncRunner {
 
         AsyncInputAgent inputAgent = new AsyncInputAgent();
         inputAgent.setChannelSet(inputChannelSet);
-        inputAgent.setListener(new RoundRobinListener());
+        inputAgent.setMessageListener(new RoundRobinListener());
 
         //output
         OutputChannel outputChannel = new OutputChannel();
@@ -59,15 +60,15 @@ public class AsyncRunner {
         BaseProcessor proc = new BaseProcessor("PrintOutProc");
         proc.setExecutor(new IExecutor() {
             @Override
-            public void processMessage(Message message, IOutputAgent outputAgent) {
-                System.out.println(message.id);
+            public void processMessage(Message message, IOutputAgent outputAgent, ProcessingContext context) throws PlatformException {
+                System.out.println(message.getId());
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                message.id++;
-                outputAgent.sendMessage("A2A",message);
+                message.setId(message.getId() + 1);
+                outputAgent.sendMessage("A2A", message, context);
             }
 
             @Override
@@ -85,12 +86,10 @@ public class AsyncRunner {
         procNode.init();
         procNode.start();
 
-        Message msg = new Message();
-        msg.id = 666;
+        Message msg = new Message(666);
 
         queueManager.getQueue("A2A").add(msg);
     }
-
 
 
 }

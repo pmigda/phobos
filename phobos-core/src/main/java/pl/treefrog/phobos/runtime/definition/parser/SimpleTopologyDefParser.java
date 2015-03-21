@@ -1,10 +1,10 @@
 package pl.treefrog.phobos.runtime.definition.parser;
 
+import org.apache.commons.lang.StringUtils;
 import pl.treefrog.phobos.exception.InvalidInputException;
 import pl.treefrog.phobos.runtime.definition.EdgeDef;
 import pl.treefrog.phobos.runtime.definition.ProcNodeDef;
 import pl.treefrog.phobos.runtime.definition.TopologyDefGraph;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;

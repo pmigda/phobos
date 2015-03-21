@@ -1,11 +1,12 @@
 package pl.treefrog.phobos.core.channel.input.async;
 
-import pl.treefrog.phobos.core.IProcessingNode;
-import pl.treefrog.phobos.core.channel.input.InputAgent;
-import pl.treefrog.phobos.exception.PhobosAssert;
-import pl.treefrog.phobos.exception.PlatformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.treefrog.phobos.core.IProcessingNode;
+import pl.treefrog.phobos.core.channel.input.InputAgent;
+import pl.treefrog.phobos.core.channel.input.async.listener.IMessageListener;
+import pl.treefrog.phobos.exception.PhobosAssert;
+import pl.treefrog.phobos.exception.PlatformException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -17,40 +18,40 @@ public class AsyncInputAgent extends InputAgent<IAsyncInputChannel> {
 
     private static final Logger log = LoggerFactory.getLogger(AsyncInputAgent.class);
 
-    protected IListener listener;
+    protected IMessageListener messageListener;
 
     @Override
     public void init(IProcessingNode nodeConfig) throws PlatformException {
         super.init(nodeConfig);
 
-        log.info("["+parentProcNode.getNodeName()+"]["+this.hashCode()+"] Initializing async input agent");
+        log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] Initializing async input agent");
 
-        PhobosAssert.assertNotNull("Listener must not be null for operation", listener);
-        listener.init(processor, channelSet);
+        PhobosAssert.assertNotNull("Listener must not be null for operation", messageListener);
+        messageListener.init(messageHandler, channelSet);
     }
 
     @Override
-    public void start() {
-        log.info("["+parentProcNode.getNodeName()+"]["+this.hashCode()+"] starting async input agent");
+    public void start() throws PlatformException {
+        log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] starting async input agent");
         super.start();
 
-        if (listener != null) {
-            listener.start();
+        if (messageListener != null) {
+            messageListener.start();
         }
     }
 
     @Override
-    public void stop() {
-        log.info("["+parentProcNode.getNodeName()+"]["+this.hashCode()+"] stopping async input agent");
+    public void stop() throws PlatformException {
+        log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] stopping async input agent");
         super.stop();
 
-        if (listener != null) {
-            listener.stop();
+        if (messageListener != null) {
+            messageListener.stop();
         }
     }
 
     //getters & setters
-    public void setListener(IListener listener) {
-        this.listener = listener;
+    public void setMessageListener(IMessageListener messageListener) {
+        this.messageListener = messageListener;
     }
 }

@@ -8,12 +8,12 @@ import pl.treefrog.phobos.exception.PlatformException;
  * created : 2015-03-03
  * license : See the "LICENSE.txt" file for the full terms of the license governing this code.
  */
-public interface ILifecycle {
+public interface IComponentLifecycle {
 
     void init(IProcessingNode nodeConfig) throws PlatformException;
 
-    void start();
+    void start() throws PlatformException;
 
-    void stop();
+    void stop() throws PlatformException;
 
 }

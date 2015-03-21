@@ -1,7 +1,8 @@
 package pl.treefrog.phobos.core.api;
 
-import pl.treefrog.phobos.core.IProcessingNode;
-import pl.treefrog.phobos.core.msg.Message;
+import pl.treefrog.phobos.core.handler.IMessageHandler;
+import pl.treefrog.phobos.core.message.Message;
+import pl.treefrog.phobos.exception.PlatformException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -15,14 +16,14 @@ import pl.treefrog.phobos.core.msg.Message;
  */
 public interface ITransport {
 
-    void init(IProcessingNode nodeConfig);
+    void init(IMessageHandler messageHandler) throws PlatformException;
 
-    void start(String channelId);
+    void start(String channelId) throws PlatformException;
 
-    void stop();
+    void stop() throws PlatformException;
 
-    void sendMessage(Message msg);
+    void sendMessage(Message msg) throws PlatformException;
 
-    Message readMessage();
+    Message readMessage() throws PlatformException;
 
 }

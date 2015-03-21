@@ -1,8 +1,8 @@
 package pl.treefrog.phobos.transport.mem.async;
 
-import pl.treefrog.phobos.core.IProcessingNode;
 import pl.treefrog.phobos.core.api.ITransport;
-import pl.treefrog.phobos.core.msg.Message;
+import pl.treefrog.phobos.core.handler.IMessageHandler;
+import pl.treefrog.phobos.core.message.Message;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -16,8 +16,8 @@ public class QueueTransport implements ITransport {
     private QueueManager queManager;
 
     @Override
-    public void init(IProcessingNode nodeConfig) {
-        //NOP
+    public void init(IMessageHandler messageHandler) {
+        //NOP async processing
     }
 
     @Override

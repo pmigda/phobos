@@ -1,5 +1,7 @@
 package pl.treefrog.phobos.runtime;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.ProcessingNode;
 import pl.treefrog.phobos.core.channel.BaseChannel;
 import pl.treefrog.phobos.core.channel.input.InputAgent;
@@ -9,8 +11,6 @@ import pl.treefrog.phobos.runtime.container.ProcessingContainer;
 import pl.treefrog.phobos.runtime.definition.EdgeDef;
 import pl.treefrog.phobos.runtime.definition.ProcNodeDef;
 import pl.treefrog.phobos.runtime.definition.TopologyDefGraph;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * This is simple builder taking abstract topology definition and converting it into processing skeleton.
  * No node processors / channels transports implementation injected yet. Only processing framework artifacts.
  * In order to make management possible all bootstrapped topology is wrapped into processing container.
- *
+ * <p>
  * Generation strategies enable to plug eligible implementation of processing framework artifacts
  * (sync / async communication agents and channels, async listeners)
  */
@@ -63,7 +63,7 @@ public class TopologyBuilder {
             String nodeId = nodeDef.getNodeId();
 
             if (procContainer.getProcessingNode(nodeId) == null) {
-                log.debug("Node with id: "+nodeId+" not known. Creating new processing node.");
+                log.debug("Node with id: " + nodeId + " not known. Creating new processing node.");
 
                 boolean hasInputs = nodeDef.getInputEdgesMap().size() != 0;
                 boolean hasOutputs = nodeDef.getOutputEdgesMap().size() != 0;
@@ -73,7 +73,7 @@ public class TopologyBuilder {
                     for (EdgeDef inputEdge : nodeDef.getInputEdgesMap().values()) {
                         BaseChannel inputChannel = procContainer.getInputChannels().get(inputEdge.getEdgeId());
                         if (inputChannel == null) {
-                            log.debug("Input channel with id: "+inputEdge.getEdgeId()+" not known. Creating new input channel.");
+                            log.debug("Input channel with id: " + inputEdge.getEdgeId() + " not known. Creating new input channel.");
                             inputChannel = inputAgentGenerator.buildInputChannel();
                             inputChannel.setChannelId(inputEdge.getEdgeId());
                         }
@@ -85,7 +85,7 @@ public class TopologyBuilder {
                     for (EdgeDef outputEdge : nodeDef.getOutputEdgesMap().values()) {
                         BaseChannel outputChannel = procContainer.getOutputChannels().get(outputEdge.getEdgeId());
                         if (outputChannel == null) {
-                            log.debug("Output channel with id: "+outputEdge.getEdgeId()+" not known. Creating new output channel.");
+                            log.debug("Output channel with id: " + outputEdge.getEdgeId() + " not known. Creating new output channel.");
                             outputChannel = outputAgentGenerator.buildOutputChannel();
                             outputChannel.setChannelId(outputEdge.getEdgeId());
                         }

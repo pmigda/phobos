@@ -6,7 +6,7 @@ import pl.treefrog.phobos.core.channel.input.InputAgent;
 import pl.treefrog.phobos.core.channel.input.async.AsyncInputAgent;
 import pl.treefrog.phobos.core.channel.input.async.AsyncInputChannel;
 import pl.treefrog.phobos.core.channel.input.async.IAsyncInputChannel;
-import pl.treefrog.phobos.listener.RoundRobinListener;
+import pl.treefrog.phobos.core.channel.input.async.listener.RoundRobinListener;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -21,7 +21,7 @@ public class AsyncInputAgentGenStrategy implements InputAgentGenStrategy {
         AsyncInputAgent res = new AsyncInputAgent();
         ChannelSet<IAsyncInputChannel> inputChannelSet = new ChannelSet<>();
         res.setChannelSet(inputChannelSet);
-        res.setListener(new RoundRobinListener());
+        res.setMessageListener(new RoundRobinListener());
         return res;
     }
 

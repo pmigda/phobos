@@ -1,5 +1,7 @@
 package pl.treefrog.phobos.runtime.container;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.ProcessingNode;
 import pl.treefrog.phobos.core.channel.BaseChannel;
 import pl.treefrog.phobos.core.channel.ChannelSet;
@@ -8,8 +10,6 @@ import pl.treefrog.phobos.core.channel.input.InputAgent;
 import pl.treefrog.phobos.core.channel.output.IOutputChannel;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
 import pl.treefrog.phobos.exception.PlatformException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class ProcessingContainer implements IProcessingContainer {
 
     @Override
     public void registerProcessingNode(ProcessingNode node) {
-        log.debug("Registering processing node: "+node.getNodeName());
+        log.debug("Registering processing node: " + node.getNodeName());
 
         processingNodes.put(node.getNodeName(), node);
 
@@ -52,7 +52,7 @@ public class ProcessingContainer implements IProcessingContainer {
                     outputChannels.put(output.getChannelId(), output);
                 }
             }
-        }else{
+        } else {
             log.warn("No output agent found for given node: " + node.getNodeName());
         }
 
@@ -65,8 +65,8 @@ public class ProcessingContainer implements IProcessingContainer {
                 BaseChannel input = inputs.getChannelInternal(inputId);
                 inputChannels.put(input.getChannelId(), input);
             }
-        }else{
-            log.warn("No input agent found for given node: "+node.getNodeName());
+        } else {
+            log.warn("No input agent found for given node: " + node.getNodeName());
         }
     }
 
@@ -93,7 +93,7 @@ public class ProcessingContainer implements IProcessingContainer {
     }
 
     @Override
-    public void start() {
+    public void start() throws PlatformException {
         log.info("START processing phase triggered");
         for (ProcessingNode procNode : processingNodes.values()) {
             procNode.start();
@@ -101,7 +101,7 @@ public class ProcessingContainer implements IProcessingContainer {
     }
 
     @Override
-    public void stop() {
+    public void stop() throws PlatformException {
         log.info("STOP processing phase triggered");
         for (ProcessingNode procNode : processingNodes.values()) {
             procNode.stop();

@@ -1,9 +1,10 @@
 package pl.treefrog.phobos.core.channel.output;
 
-import pl.treefrog.phobos.core.channel.BaseChannel;
-import pl.treefrog.phobos.core.msg.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.treefrog.phobos.core.channel.BaseChannel;
+import pl.treefrog.phobos.core.message.Message;
+import pl.treefrog.phobos.exception.PlatformException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -16,7 +17,7 @@ public class OutputChannel extends BaseChannel implements IOutputChannel {
     private static final Logger log = LoggerFactory.getLogger(OutputChannel.class);
 
     @Override
-    public void sendMessage(Message msg) {
+    public void sendMessage(Message msg) throws PlatformException {
         transport.sendMessage(msg);
     }
 

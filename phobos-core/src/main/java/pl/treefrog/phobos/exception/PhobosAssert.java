@@ -8,8 +8,8 @@ package pl.treefrog.phobos.exception;
  */
 public class PhobosAssert {
 
-    public static void assertNotNull(String msg,Object obj) throws PlatformException {
-        if (obj == null){
+    public static void assertNotNull(String msg, Object obj) throws PlatformException {
+        if (obj == null) {
             throw new PlatformException(msg);
         }
     }

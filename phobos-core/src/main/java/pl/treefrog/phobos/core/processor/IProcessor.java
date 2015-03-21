@@ -1,6 +1,8 @@
 package pl.treefrog.phobos.core.processor;
 
-import pl.treefrog.phobos.core.msg.Message;
+import pl.treefrog.phobos.core.message.Message;
+import pl.treefrog.phobos.core.state.context.ProcessingContext;
+import pl.treefrog.phobos.exception.PlatformException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -10,6 +12,6 @@ import pl.treefrog.phobos.core.msg.Message;
  */
 public interface IProcessor {
 
-    void processMessage(Message message);
+    void processMessage(Message message, ProcessingContext context) throws PlatformException;
 
 }

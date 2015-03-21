@@ -10,8 +10,9 @@ import pl.treefrog.phobos.core.channel.output.IOutputAgent;
 import pl.treefrog.phobos.core.channel.output.IOutputChannel;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputChannel;
-import pl.treefrog.phobos.core.msg.Message;
+import pl.treefrog.phobos.core.message.Message;
 import pl.treefrog.phobos.core.processor.BaseProcessor;
+import pl.treefrog.phobos.core.state.context.ProcessingContext;
 import pl.treefrog.phobos.exception.PlatformException;
 import pl.treefrog.phobos.transport.mem.sync.DirectCallTransport;
 
@@ -53,9 +54,9 @@ public class SyncRunner {
         BaseProcessor proc1 = new BaseProcessor("PrintOutProc1");
         proc1.setExecutor(new IExecutor() {
             @Override
-            public void processMessage(Message message, IOutputAgent outputAgent) {
-                System.out.println("Node A: "+message.id);
-                outputAgent.sendMessage("A2B", message);
+            public void processMessage(Message message, IOutputAgent outputAgent, ProcessingContext context) throws PlatformException {
+                System.out.println("Node A: " + message.getId());
+                outputAgent.sendMessage("A2B", message, context);
             }
 
             @Override
@@ -69,7 +70,6 @@ public class SyncRunner {
         procNode.setInputAgentInternal(inputAgent1);
         procNode.setOutputAgentInternal(outputAgent);
         procNode.setProcessorInternal(proc1);
-        tsync_input1.setProcessor(proc1); //direct call
 
         //Node2 Def
         //input
@@ -89,8 +89,8 @@ public class SyncRunner {
         BaseProcessor proc2 = new BaseProcessor("PrintOutProc2");
         proc2.setExecutor(new IExecutor() {
             @Override
-            public void processMessage(Message message, IOutputAgent outputAgent) {
-                System.out.println("Node B: "+message.id);
+            public void processMessage(Message message, IOutputAgent outputAgent, ProcessingContext context) {
+                System.out.println("Node B: " + message.getId());
             }
 
             @Override
@@ -103,17 +103,14 @@ public class SyncRunner {
         ProcessingNode procNode2 = new ProcessingNode("node_B");
         procNode2.setInputAgentInternal(inputAgent2);
         procNode2.setProcessorInternal(proc2);
-        tsync_input2.setProcessor(proc2);  //direct call
 
         procNode.init();
         procNode2.init();
 
-        Message msg = new Message();
-        msg.id = 666;
+        Message msg = new Message(666);
 
         tsync_input1.sendMessage(msg);
     }
-
 
 
 }

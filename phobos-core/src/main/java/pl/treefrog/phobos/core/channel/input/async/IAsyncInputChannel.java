@@ -1,7 +1,8 @@
 package pl.treefrog.phobos.core.channel.input.async;
 
 import pl.treefrog.phobos.core.channel.IChannel;
-import pl.treefrog.phobos.core.msg.Message;
+import pl.treefrog.phobos.core.message.Message;
+import pl.treefrog.phobos.exception.PlatformException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -11,6 +12,6 @@ import pl.treefrog.phobos.core.msg.Message;
  */
 public interface IAsyncInputChannel extends IChannel {
 
-    Message readMessage();
+    Message readMessage() throws PlatformException;
 
 }

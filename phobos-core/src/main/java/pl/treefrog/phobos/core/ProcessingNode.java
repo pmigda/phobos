@@ -1,14 +1,17 @@
 package pl.treefrog.phobos.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.channel.input.IInputAgent;
 import pl.treefrog.phobos.core.channel.input.InputAgent;
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
+import pl.treefrog.phobos.core.handler.IMessageHandler;
+import pl.treefrog.phobos.core.handler.MessageHandler;
 import pl.treefrog.phobos.core.processor.AbstractProcessor;
 import pl.treefrog.phobos.core.processor.IProcessor;
+import pl.treefrog.phobos.exception.PhobosAssert;
 import pl.treefrog.phobos.exception.PlatformException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -27,6 +30,7 @@ public class ProcessingNode implements IProcessingNode {
     private String nodeName;
     private String instanceId;
 
+    private MessageHandler messageHandler = new MessageHandler();
     private InputAgent inputAgent;
     private OutputAgent outputAgent;
     private AbstractProcessor processor;
@@ -37,74 +41,94 @@ public class ProcessingNode implements IProcessingNode {
 
     public void init() throws PlatformException {
 
-        log.info("["+nodeName+"] Beginning INIT lifecycle phase...");
+        log.info("[" + nodeName + "] Beginning INIT lifecycle phase...");
+
+        if (messageHandler != null) {
+            log.info("[" + nodeName + "] Initializing message handler " + messageHandler.getClass().getName());
+            messageHandler.init(this);
+        } else {
+            log.warn("[" + nodeName + "] No message handler provided");
+        }
 
         if (outputAgent != null) {
-            log.info("["+nodeName+"] Initializing outputAgent " + outputAgent.getClass().getName());
+            log.info("[" + nodeName + "] Initializing outputAgent " + outputAgent.getClass().getName());
             outputAgent.init(this);
-        }else{
+        } else {
             log.warn("[" + nodeName + "] No outputAgent provided");
         }
 
-        if (processor != null) {
-            log.info("["+nodeName+"] Initializing processor " + processor.getClass().getName());
-            processor.init(this);
-        }else{
-            log.warn("[" + nodeName + "] No processor provided");
-        }
+        PhobosAssert.assertNotNull("[" + nodeName + "] No processor provided. Processor is a mandatory component for processing", processor);
+        log.info("[" + nodeName + "] Initializing processor " + processor.getClass().getName());
+        processor.init(this);
 
         if (inputAgent != null) {
-            log.info("["+nodeName+"] Initializing inputAgent " + inputAgent.getClass().getName());
+            log.info("[" + nodeName + "] Initializing inputAgent " + inputAgent.getClass().getName());
             inputAgent.init(this);
-        }else{
+        } else {
             log.warn("[" + nodeName + "] No inputAgent provided");
         }
 
-        log.info("["+nodeName+"] INIT lifecycle phase finished");
+        log.info("[" + nodeName + "] INIT lifecycle phase finished");
 
     }
 
-    public void start() {
+    public void start() throws PlatformException {
 
-        log.info("["+nodeName+"] Beginning START lifecycle phase...");
+        log.info("[" + nodeName + "] Beginning START lifecycle phase...");
+
+        if (messageHandler != null) {
+            log.info("[" + messageHandler + "] Starting message handler");
+            messageHandler.start();
+        }
 
         if (outputAgent != null) {
-            log.info("["+nodeName+"] Starting outputAgent");
+            log.info("[" + nodeName + "] Starting outputAgent");
             outputAgent.start();
         }
 
-        if (processor != null) {
-            log.info("["+nodeName+"] Starting processor");
-            processor.start();
-        }
+        PhobosAssert.assertNotNull("[" + nodeName + "] No processor provided. Processor is a mandatory component for processing", processor);
+        log.info("[" + nodeName + "] Starting processor");
+        processor.start();
+
 
         if (inputAgent != null) {
-            log.info("["+nodeName+"] Starting inputAgent");
+            log.info("[" + nodeName + "] Starting inputAgent");
             inputAgent.start();
         }
 
-        log.info("["+nodeName+"] START lifecycle phase finished");
+        log.info("[" + nodeName + "] START lifecycle phase finished");
     }
 
-    public void stop() {
+    public void stop() throws PlatformException {
 
-        log.info("["+nodeName+"] Beginning STOP lifecycle phase...");
+        log.info("[" + nodeName + "] Beginning STOP lifecycle phase...");
+
+        if (messageHandler != null) {
+            log.info("[" + nodeName + "] Stopping message handler");
+            messageHandler.stop();
+        }
+
         if (outputAgent != null) {
-            log.info("["+nodeName+"] Stopping outputAgent");
+            log.info("[" + nodeName + "] Stopping outputAgent");
             outputAgent.stop();
         }
 
-        if (processor != null) {
-            log.info("["+nodeName+"] Stopping processor");
-            processor.stop();
-        }
+        PhobosAssert.assertNotNull("[" + nodeName + "] No processor provided. Processor is a mandatory component for processing", processor);
+        log.info("[" + nodeName + "] Stopping processor");
+        processor.stop();
+
 
         if (inputAgent != null) {
             log.info("[" + nodeName + "] Stopping inputAgent");
             inputAgent.stop();
         }
 
-        log.info("["+nodeName+"] STOP lifecycle phase finished");
+        log.info("[" + nodeName + "] STOP lifecycle phase finished");
+    }
+
+    @Override
+    public IMessageHandler getMessageHandler() {
+        return messageHandler;
     }
 
     @Override
@@ -142,6 +166,15 @@ public class ProcessingNode implements IProcessingNode {
 
 
     //Internal implementation & IoC management
+    public MessageHandler getMessageHandlerInternal() {
+        return messageHandler;
+    }
+
+    public void setMessageHandlerInternal(MessageHandler messageHandler) {
+        this.messageHandler = messageHandler;
+    }
+
+
     public InputAgent getInputAgentInternal() {
         return inputAgent;
     }

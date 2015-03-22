@@ -2,7 +2,7 @@ package pl.treefrog.phobos.core.control.termination;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.treefrog.phobos.core.channel.IAgentPhaseListener;
+import pl.treefrog.phobos.core.channel.output.IOutputAgentPhaseListener;
 import pl.treefrog.phobos.core.message.ControlMessage;
 import pl.treefrog.phobos.core.message.MessageType;
 import pl.treefrog.phobos.core.state.context.ProcessingContext;
@@ -18,14 +18,14 @@ import static pl.treefrog.phobos.core.control.termination.WeightThrowingConst.NO
  * created : 2015-03-03
  * license : See the "LICENSE.txt" file for the full terms of the license governing this code.
  */
-public class WeightThrowingChannelListener implements IAgentPhaseListener<ControlMessage> {
+public class WeightThrowingChannelListener implements IOutputAgentPhaseListener<ControlMessage> {
 
     private static final Logger log = LoggerFactory.getLogger(WeightThrowingChannelListener.class);
 
     @Override
-    public void preProcessPhase(ControlMessage message, ProcessingContext context) throws PlatformException {
+    public void beforeSendPhase(ControlMessage message, ProcessingContext context) throws PlatformException {
 
-        if (message.getType() != MessageType.CONTROL.getIdx()) { //skip control messages in algorithm
+        if (message != null && message.getType() != MessageType.CONTROL.getIdx()) { //skip control messages in algorithm
 
             Integer nodeWeight = (Integer) context.get(NODE_WEIGHT_CTX_SUM);
             PhobosAssert.assertNotNull("Node weight should not be null. ", nodeWeight);
@@ -42,7 +42,7 @@ public class WeightThrowingChannelListener implements IAgentPhaseListener<Contro
     }
 
     @Override
-    public void postProcessPhase(ControlMessage message, ProcessingContext context) throws PlatformException {
+    public void afterSendPhase(ControlMessage message, ProcessingContext context) throws PlatformException {
         //NOP
     }
 }

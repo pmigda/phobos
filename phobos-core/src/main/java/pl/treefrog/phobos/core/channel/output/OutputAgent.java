@@ -17,6 +17,7 @@ import pl.treefrog.phobos.exception.PlatformException;
 public class OutputAgent extends AbstractChannelAgent<OutputChannel> implements IOutputAgent, IComponentLifecycle {
 
     private static final Logger log = LoggerFactory.getLogger(OutputAgent.class);
+    private IOutputAgentPhaseListener agentPhaseListener;
 
     @Override
     public void sendMessage(String channelId, Message msg, ProcessingContext context) throws PlatformException {
@@ -25,19 +26,24 @@ public class OutputAgent extends AbstractChannelAgent<OutputChannel> implements 
         if (output != null) {
 
             if (agentPhaseListener != null) {
-                agentPhaseListener.preProcessPhase(msg, context);
+                agentPhaseListener.beforeSendPhase(msg, context);
             }
 
             output.sendMessage(msg);
 
             if (agentPhaseListener != null) {
-                agentPhaseListener.postProcessPhase(msg, context);
+                agentPhaseListener.afterSendPhase(msg, context);
             }
 
         } else {
             log.error("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] Can't send message. Possible configuration error. No channel with given id available: " + channelId);
             //TODO add runtime processing exception handling (there are some approaches conceived out there)
         }
+    }
+
+    //IoC getters & setters
+    public void setAgentPhaseListener(IOutputAgentPhaseListener agentPhaseListener) {
+        this.agentPhaseListener = agentPhaseListener;
     }
 
 }

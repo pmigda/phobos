@@ -2,9 +2,7 @@ package pl.treefrog.phobos.core.channel.input.async.listener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.treefrog.phobos.core.channel.IChannelSet;
-import pl.treefrog.phobos.core.channel.input.IInputChannel;
-import pl.treefrog.phobos.core.channel.input.InputChannel;
+import pl.treefrog.phobos.core.channel.input.IInputAgent;
 import pl.treefrog.phobos.core.handler.IMessageHandler;
 import pl.treefrog.phobos.core.message.Message;
 import pl.treefrog.phobos.exception.PhobosAssert;
@@ -29,17 +27,17 @@ public class RoundRobinListener implements IMessageListener {
     private static final Logger log = LoggerFactory.getLogger(RoundRobinListener.class);
 
     private IMessageHandler messageHandler;
-    private IChannelSet<InputChannel> channelSet;
+    private IInputAgent inputAgent;
 
     @Override
-    public void init(IMessageHandler handler, IChannelSet<InputChannel> channelSet) throws PlatformException {
+    public void init(IMessageHandler handler, IInputAgent inputAgent) throws PlatformException {
         log.info("[" + this.hashCode() + "] Initializing round robin listener");
 
         this.messageHandler = handler;
-        PhobosAssert.assertNotNull("Message handler is required for processing", handler);
+        PhobosAssert.assertNotNull("Message handler is required by listener for processing", handler);
 
-        this.channelSet = channelSet;
-        PhobosAssert.assertNotNull("Channel set is required for processing", channelSet);
+        this.inputAgent = inputAgent;
+        PhobosAssert.assertNotNull("Input agent is required by listener for processing", inputAgent);
     }
 
     @Override
@@ -47,10 +45,12 @@ public class RoundRobinListener implements IMessageListener {
         log.info("[" + this.hashCode() + "] starting round robin listener");
         Thread thread = new Thread(() -> {
             while (true) {
-                for (String inputTopic : channelSet.getRegisteredChannelIds()) {
+
+                /* pretty dumb implementation for now,
+                having blocking queue and at least 2 inputs very likely deadlock to occur */
+                for (String inputTopic : inputAgent.getRegisteredChannelIds()) {
                     try {
-                        IInputChannel input = channelSet.getChannel(inputTopic);
-                        Message msg = input.readMessage();
+                        Message msg = inputAgent.readMessage(inputTopic);
 
                         if (msg != null) {
                             messageHandler.processMessage(msg);

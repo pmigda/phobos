@@ -30,7 +30,6 @@ public abstract class AbstractChannelAgent<C extends AbstractChannel> implements
 
     protected IProcessingNode parentProcNode;
     protected ChannelSet<C> channelSet;
-    protected IAgentPhaseListener agentPhaseListener;
 
     @Override
     public void init(IProcessingNode nodeConfig) throws PlatformException {
@@ -81,7 +80,4 @@ public abstract class AbstractChannelAgent<C extends AbstractChannel> implements
         this.channelSet = channelSet;
     }
 
-    public void setAgentPhaseListener(IAgentPhaseListener agentPhaseListener) {
-        this.agentPhaseListener = agentPhaseListener;
-    }
 }

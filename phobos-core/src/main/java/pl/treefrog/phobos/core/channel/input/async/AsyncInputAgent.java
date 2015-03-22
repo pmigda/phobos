@@ -27,7 +27,7 @@ public class AsyncInputAgent extends InputAgent {
         log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] Initializing async input agent");
 
         PhobosAssert.assertNotNull("Listener must not be null for operation", messageListener);
-        messageListener.init(messageHandler, channelSet);
+        messageListener.init(messageHandler, this);
     }
 
     @Override

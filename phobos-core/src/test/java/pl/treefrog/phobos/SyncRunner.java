@@ -2,12 +2,10 @@ package pl.treefrog.phobos;
 
 import pl.treefrog.phobos.core.ProcessingNode;
 import pl.treefrog.phobos.core.api.IExecutor;
-import pl.treefrog.phobos.core.channel.BaseChannel;
 import pl.treefrog.phobos.core.channel.ChannelSet;
-import pl.treefrog.phobos.core.channel.IChannel;
 import pl.treefrog.phobos.core.channel.input.InputAgent;
+import pl.treefrog.phobos.core.channel.input.InputChannel;
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
-import pl.treefrog.phobos.core.channel.output.IOutputChannel;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputChannel;
 import pl.treefrog.phobos.core.message.Message;
@@ -28,23 +26,23 @@ public class SyncRunner {
 
         //input
         DirectCallTransport tsync_input1 = new DirectCallTransport();
-        BaseChannel inputChannel = new BaseChannel();
+        InputChannel inputChannel = new InputChannel();
         inputChannel.setChannelId("InA");
-        inputChannel.setTransport(tsync_input1);
+        inputChannel.registerInputTransport(tsync_input1);
 
-        ChannelSet<IChannel> inputChannelSet = new ChannelSet<>();
+        ChannelSet<InputChannel> inputChannelSet = new ChannelSet<>();
         inputChannelSet.registerChannel(inputChannel);
 
-        InputAgent inputAgent1 = new InputAgent<>();
+        InputAgent inputAgent1 = new InputAgent();
         inputAgent1.setChannelSet(inputChannelSet);
 
         //output
         DirectCallTransport tsync_input2 = new DirectCallTransport();
         OutputChannel outputChannel = new OutputChannel();
         outputChannel.setChannelId("A2B");
-        outputChannel.setTransport(tsync_input2);
+        outputChannel.registerOutputTransport(tsync_input2);
 
-        ChannelSet<IOutputChannel> outputChannelSet = new ChannelSet<>();
+        ChannelSet<OutputChannel> outputChannelSet = new ChannelSet<>();
         outputChannelSet.registerChannel(outputChannel);
 
         OutputAgent outputAgent = new OutputAgent();
@@ -74,13 +72,13 @@ public class SyncRunner {
         //Node2 Def
         //input
 
-        BaseChannel inputChannel2 = new BaseChannel();
-        inputChannel2.setTransport(tsync_input2);
+        InputChannel inputChannel2 = new InputChannel();
+        inputChannel2.registerInputTransport(tsync_input2);
 
-        ChannelSet<BaseChannel> inputChannelSet2 = new ChannelSet<>();
+        ChannelSet<InputChannel> inputChannelSet2 = new ChannelSet<>();
         inputChannelSet2.registerChannel(inputChannel2);
 
-        InputAgent<BaseChannel> inputAgent2 = new InputAgent();
+        InputAgent inputAgent2 = new InputAgent();
         inputAgent2.setChannelSet(inputChannelSet2);
 
         //no output

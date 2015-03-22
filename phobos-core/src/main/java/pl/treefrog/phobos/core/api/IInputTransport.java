@@ -10,11 +10,7 @@ import pl.treefrog.phobos.exception.PlatformException;
  * created : 2015-03-03
  * license : See the "LICENSE.txt" file for the full terms of the license governing this code.
  */
-
-/**
- * Platform plug point for messages xchange transport
- */
-public interface ITransport {
+public interface IInputTransport {
 
     void init(IMessageHandler messageHandler) throws PlatformException;
 
@@ -22,8 +18,5 @@ public interface ITransport {
 
     void stop() throws PlatformException;
 
-    void sendMessage(Message msg) throws PlatformException;
-
     Message readMessage() throws PlatformException;
-
 }

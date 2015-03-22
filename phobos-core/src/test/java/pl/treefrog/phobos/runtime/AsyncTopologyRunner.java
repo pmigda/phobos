@@ -29,8 +29,8 @@ public class AsyncTopologyRunner {
 
         //provide low level implementations
         QueueManager queueManager = new QueueManager();
-        QueueTestHelper.populateAsyncChannelsImpl(runtimeContainer.getInputChannels(), queueManager);
-        QueueTestHelper.populateAsyncChannelsImpl(runtimeContainer.getOutputChannels(), queueManager);
+        QueueTestHelper.populateAsyncInputChannelsImpl(runtimeContainer.getInputChannels(), queueManager);
+        QueueTestHelper.populateAsyncOutputChannelsImpl(runtimeContainer.getOutputChannels(), queueManager);
 
         //processing node A
         ProcessingNode node = runtimeContainer.getProcessingNode("A");

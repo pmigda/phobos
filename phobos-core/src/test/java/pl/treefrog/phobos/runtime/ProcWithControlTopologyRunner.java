@@ -30,8 +30,8 @@ public class ProcWithControlTopologyRunner {
 
         //provide low level implementations
         QueueManager queueManager = new QueueManager();
-        QueueTestHelper.populateAsyncChannelsImpl(runtimeContainer.getInputChannels(), queueManager);
-        QueueTestHelper.populateAsyncChannelsImpl(runtimeContainer.getOutputChannels(), queueManager);
+        QueueTestHelper.populateAsyncInputChannelsImpl(runtimeContainer.getInputChannels(), queueManager);
+        QueueTestHelper.populateAsyncOutputChannelsImpl(runtimeContainer.getOutputChannels(), queueManager);
 
 
         //Processing Node A

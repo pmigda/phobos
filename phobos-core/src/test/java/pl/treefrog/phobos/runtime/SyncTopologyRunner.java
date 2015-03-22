@@ -30,10 +30,10 @@ public class SyncTopologyRunner {
 
         //inject low level implementations
         DirectCallTransport tInA = QueueTestHelper.createSyncTransport();
-        runtimeContainer.getInputChannels().get("InA").setTransport(tInA);
+        runtimeContainer.getInputChannels().get("InA").registerInputTransport(tInA);
         DirectCallTransport tAB = QueueTestHelper.createSyncTransport();
-        runtimeContainer.getInputChannels().get("A2B").setTransport(tAB);
-        runtimeContainer.getOutputChannels().get("A2B").setTransport(tAB);
+        runtimeContainer.getInputChannels().get("A2B").registerInputTransport(tAB);
+        runtimeContainer.getOutputChannels().get("A2B").registerOutputTransport(tAB);
 
         //processing node A
         ProcessingNode nodeA = runtimeContainer.getProcessingNode("A");

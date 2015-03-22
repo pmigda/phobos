@@ -23,12 +23,12 @@ import java.util.Map;
  * ChannelSet is a container for channels, it simply manages channels lifecycle.
  * As an generic container it can hold channels of the both input and output types
  */
-public class ChannelSet<T extends IChannel> implements IChannelSet<T>, IComponentLifecycle {
+public class ChannelSet<T extends AbstractChannel> implements IChannelSet<T>, IComponentLifecycle {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelSet.class);
 
     protected IProcessingNode parentProcNode;
-    protected Map<String, BaseChannel> channels = new HashMap<>();
+    protected Map<String, T> channels = new HashMap<>();
 
     @Override
     public void init(IProcessingNode nodeConfig) throws PlatformException {
@@ -37,7 +37,7 @@ public class ChannelSet<T extends IChannel> implements IChannelSet<T>, IComponen
 
         log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] Initializing channel set");
 
-        for (BaseChannel channel : channels.values()) {
+        for (T channel : channels.values()) {
             channel.init(nodeConfig);
         }
     }
@@ -46,7 +46,7 @@ public class ChannelSet<T extends IChannel> implements IChannelSet<T>, IComponen
     public void start() throws PlatformException {
         log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] starting channel set");
 
-        for (BaseChannel channel : channels.values()) {
+        for (AbstractChannel channel : channels.values()) {
             channel.start();
         }
     }
@@ -55,14 +55,14 @@ public class ChannelSet<T extends IChannel> implements IChannelSet<T>, IComponen
     public void stop() throws PlatformException {
         log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] stopping channel set");
 
-        for (BaseChannel channel : channels.values()) {
+        for (AbstractChannel channel : channels.values()) {
             channel.stop();
         }
     }
 
     @Override
     public T getChannel(String channelId) {
-        return (T) channels.get(channelId);
+        return channels.get(channelId);
     }
 
     @Override
@@ -76,16 +76,12 @@ public class ChannelSet<T extends IChannel> implements IChannelSet<T>, IComponen
     }
 
     //getters & setters
-    public void registerChannels(Map<String, BaseChannel> channels) {
+    public void registerChannels(Map<String, T> channels) {
         this.channels = channels;
     }
 
-    public void registerChannel(BaseChannel channel) {
+    public void registerChannel(T channel) {
         channels.put(channel.getChannelId(), channel);
-    }
-
-    public BaseChannel getChannelInternal(String channelId) {
-        return channels.get(channelId);
     }
 
 }

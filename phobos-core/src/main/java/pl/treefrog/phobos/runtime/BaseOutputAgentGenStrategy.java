@@ -1,8 +1,6 @@
 package pl.treefrog.phobos.runtime;
 
-import pl.treefrog.phobos.core.channel.BaseChannel;
 import pl.treefrog.phobos.core.channel.ChannelSet;
-import pl.treefrog.phobos.core.channel.output.IOutputChannel;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputChannel;
 
@@ -17,13 +15,13 @@ public class BaseOutputAgentGenStrategy implements OutputAgentGenStrategy {
     @Override
     public OutputAgent buildOutputAgent() {
         OutputAgent outputAgent = new OutputAgent();
-        ChannelSet<IOutputChannel> outputChannelSet = new ChannelSet<>();
+        ChannelSet<OutputChannel> outputChannelSet = new ChannelSet<>();
         outputAgent.setChannelSet(outputChannelSet);
         return outputAgent;
     }
 
     @Override
-    public BaseChannel buildOutputChannel() {
+    public OutputChannel buildOutputChannel() {
         return new OutputChannel();
     }
 

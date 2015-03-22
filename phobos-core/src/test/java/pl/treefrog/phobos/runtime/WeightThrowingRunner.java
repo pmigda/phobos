@@ -47,8 +47,8 @@ public class WeightThrowingRunner {
 
         //provide low level implementations
         QueueManager queueManager = new QueueManager();
-        QueueTestHelper.populateAsyncChannelsImpl(runtimeContainer.getInputChannels(), queueManager);
-        QueueTestHelper.populateAsyncChannelsImpl(runtimeContainer.getOutputChannels(), queueManager);
+        QueueTestHelper.populateAsyncInputChannelsImpl(runtimeContainer.getInputChannels(), queueManager);
+        QueueTestHelper.populateAsyncOutputChannelsImpl(runtimeContainer.getOutputChannels(), queueManager);
 
         ProcessingNode controlNode = runtimeContainer.getProcessingNode("Z");
         BaseProcessor controlProc = new BaseProcessor("Weight Throwing Controller Processor");

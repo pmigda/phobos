@@ -1,7 +1,7 @@
 package pl.treefrog.phobos.runtime;
 
-import pl.treefrog.phobos.core.channel.BaseChannel;
 import pl.treefrog.phobos.core.channel.input.InputAgent;
+import pl.treefrog.phobos.core.channel.input.InputChannel;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -18,5 +18,5 @@ public interface InputAgentGenStrategy {
 
     InputAgent buildInputAgent();
 
-    BaseChannel buildInputChannel();
+    InputChannel buildInputChannel();
 }

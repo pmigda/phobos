@@ -14,7 +14,7 @@ import pl.treefrog.phobos.exception.PlatformException;
  * created : 2015-03-03
  * license : See the "LICENSE.txt" file for the full terms of the license governing this code.
  */
-public class OutputAgent extends AbstractChannelAgent<IOutputChannel> implements IOutputAgent, IComponentLifecycle {
+public class OutputAgent extends AbstractChannelAgent<OutputChannel> implements IOutputAgent, IComponentLifecycle {
 
     private static final Logger log = LoggerFactory.getLogger(OutputAgent.class);
 

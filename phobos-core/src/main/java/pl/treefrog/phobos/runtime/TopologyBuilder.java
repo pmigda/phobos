@@ -3,9 +3,10 @@ package pl.treefrog.phobos.runtime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.ProcessingNode;
-import pl.treefrog.phobos.core.channel.BaseChannel;
 import pl.treefrog.phobos.core.channel.input.InputAgent;
+import pl.treefrog.phobos.core.channel.input.InputChannel;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
+import pl.treefrog.phobos.core.channel.output.OutputChannel;
 import pl.treefrog.phobos.runtime.container.IProcessingContainer;
 import pl.treefrog.phobos.runtime.container.ProcessingContainer;
 import pl.treefrog.phobos.runtime.definition.EdgeDef;
@@ -71,7 +72,7 @@ public class TopologyBuilder {
 
                 if (hasInputs) {
                     for (EdgeDef inputEdge : nodeDef.getInputEdgesMap().values()) {
-                        BaseChannel inputChannel = procContainer.getInputChannels().get(inputEdge.getEdgeId());
+                        InputChannel inputChannel = procContainer.getInputChannels().get(inputEdge.getEdgeId());
                         if (inputChannel == null) {
                             log.debug("Input channel with id: " + inputEdge.getEdgeId() + " not known. Creating new input channel.");
                             inputChannel = inputAgentGenerator.buildInputChannel();
@@ -83,7 +84,7 @@ public class TopologyBuilder {
 
                 if (hasOutputs) {
                     for (EdgeDef outputEdge : nodeDef.getOutputEdgesMap().values()) {
-                        BaseChannel outputChannel = procContainer.getOutputChannels().get(outputEdge.getEdgeId());
+                        OutputChannel outputChannel = procContainer.getOutputChannels().get(outputEdge.getEdgeId());
                         if (outputChannel == null) {
                             log.debug("Output channel with id: " + outputEdge.getEdgeId() + " not known. Creating new output channel.");
                             outputChannel = outputAgentGenerator.buildOutputChannel();

@@ -1,7 +1,7 @@
 package pl.treefrog.phobos.core.channel.input.async.listener;
 
 import pl.treefrog.phobos.core.channel.IChannelSet;
-import pl.treefrog.phobos.core.channel.input.async.IAsyncInputChannel;
+import pl.treefrog.phobos.core.channel.input.InputChannel;
 import pl.treefrog.phobos.core.handler.IMessageHandler;
 import pl.treefrog.phobos.exception.PlatformException;
 
@@ -17,7 +17,7 @@ import pl.treefrog.phobos.exception.PlatformException;
  */
 public interface IMessageListener {
 
-    void init(IMessageHandler handler, IChannelSet<IAsyncInputChannel> channelSet) throws PlatformException;
+    void init(IMessageHandler handler, IChannelSet<InputChannel> channelSet) throws PlatformException;
 
     void start() throws PlatformException;
 

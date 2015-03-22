@@ -3,7 +3,8 @@ package pl.treefrog.phobos.core.channel.input.async.listener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.channel.IChannelSet;
-import pl.treefrog.phobos.core.channel.input.async.IAsyncInputChannel;
+import pl.treefrog.phobos.core.channel.input.IInputChannel;
+import pl.treefrog.phobos.core.channel.input.InputChannel;
 import pl.treefrog.phobos.core.handler.IMessageHandler;
 import pl.treefrog.phobos.core.message.Message;
 import pl.treefrog.phobos.exception.PhobosAssert;
@@ -28,10 +29,10 @@ public class RoundRobinListener implements IMessageListener {
     private static final Logger log = LoggerFactory.getLogger(RoundRobinListener.class);
 
     private IMessageHandler messageHandler;
-    private IChannelSet<IAsyncInputChannel> channelSet;
+    private IChannelSet<InputChannel> channelSet;
 
     @Override
-    public void init(IMessageHandler handler, IChannelSet<IAsyncInputChannel> channelSet) throws PlatformException {
+    public void init(IMessageHandler handler, IChannelSet<InputChannel> channelSet) throws PlatformException {
         log.info("[" + this.hashCode() + "] Initializing round robin listener");
 
         this.messageHandler = handler;
@@ -48,7 +49,7 @@ public class RoundRobinListener implements IMessageListener {
             while (true) {
                 for (String inputTopic : channelSet.getRegisteredChannelIds()) {
                     try {
-                        IAsyncInputChannel input = channelSet.getChannel(inputTopic);
+                        IInputChannel input = channelSet.getChannel(inputTopic);
                         Message msg = input.readMessage();
 
                         if (msg != null) {

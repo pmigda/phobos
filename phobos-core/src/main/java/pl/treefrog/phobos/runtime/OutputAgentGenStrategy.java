@@ -1,7 +1,7 @@
 package pl.treefrog.phobos.runtime;
 
-import pl.treefrog.phobos.core.channel.BaseChannel;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
+import pl.treefrog.phobos.core.channel.output.OutputChannel;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -18,5 +18,5 @@ public interface OutputAgentGenStrategy {
 
     OutputAgent buildOutputAgent();
 
-    BaseChannel buildOutputChannel();
+    OutputChannel buildOutputChannel();
 }

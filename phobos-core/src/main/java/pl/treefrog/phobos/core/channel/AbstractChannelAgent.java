@@ -24,7 +24,7 @@ import java.util.List;
  * checked against agent. Effectively there's one point of control for all input / output channels (i.e. input and output agent respectively),
  * but executors know only channels they require and are ensured those channels exist during init phase.
  */
-public abstract class AbstractChannelAgent<C extends IChannel> implements IChannelAgent, IComponentLifecycle {
+public abstract class AbstractChannelAgent<C extends AbstractChannel> implements IChannelAgent, IComponentLifecycle {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractChannelAgent.class);
 

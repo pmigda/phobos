@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.IProcessingNode;
 import pl.treefrog.phobos.core.channel.AbstractChannelAgent;
-import pl.treefrog.phobos.core.channel.IChannel;
 import pl.treefrog.phobos.core.handler.IMessageHandler;
 import pl.treefrog.phobos.exception.PhobosAssert;
 import pl.treefrog.phobos.exception.PlatformException;
@@ -15,7 +14,7 @@ import pl.treefrog.phobos.exception.PlatformException;
  * created : 2015-03-03
  * license : See the "LICENSE.txt" file for the full terms of the license governing this code.
  */
-public class InputAgent<C extends IChannel> extends AbstractChannelAgent<C> implements IInputAgent {
+public class InputAgent extends AbstractChannelAgent<InputChannel> implements IInputAgent {
 
     private static final Logger log = LoggerFactory.getLogger(InputAgent.class);
 

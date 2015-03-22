@@ -3,12 +3,11 @@ package pl.treefrog.phobos.runtime.container;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.ProcessingNode;
-import pl.treefrog.phobos.core.channel.BaseChannel;
 import pl.treefrog.phobos.core.channel.ChannelSet;
-import pl.treefrog.phobos.core.channel.IChannel;
 import pl.treefrog.phobos.core.channel.input.InputAgent;
-import pl.treefrog.phobos.core.channel.output.IOutputChannel;
+import pl.treefrog.phobos.core.channel.input.InputChannel;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
+import pl.treefrog.phobos.core.channel.output.OutputChannel;
 import pl.treefrog.phobos.exception.PlatformException;
 
 import java.util.HashMap;
@@ -33,8 +32,8 @@ public class ProcessingContainer implements IProcessingContainer {
     private static final Logger log = LoggerFactory.getLogger(ProcessingContainer.class);
 
     private Map<String, ProcessingNode> processingNodes = new HashMap<>();
-    private Map<String, BaseChannel> inputChannels = new HashMap<>();
-    private Map<String, BaseChannel> outputChannels = new HashMap<>();
+    private Map<String, InputChannel> inputChannels = new HashMap<>();
+    private Map<String, OutputChannel> outputChannels = new HashMap<>();
 
     @Override
     public void registerProcessingNode(ProcessingNode node) {
@@ -44,11 +43,11 @@ public class ProcessingContainer implements IProcessingContainer {
 
         OutputAgent outputAgent = node.getOutputAgentInternal();
         if (outputAgent != null) {
-            ChannelSet<IOutputChannel> outputs = outputAgent.getChannelSet();
+            ChannelSet<OutputChannel> outputs = outputAgent.getChannelSet();
             if (outputs != null && outputs.getRegisteredChannelIds() != null
                     && !outputs.getRegisteredChannelIds().isEmpty()) {
                 for (String outputId : outputs.getRegisteredChannelIds()) {
-                    BaseChannel output = outputs.getChannelInternal(outputId);
+                    OutputChannel output = outputs.getChannel(outputId);
                     outputChannels.put(output.getChannelId(), output);
                 }
             }
@@ -58,11 +57,11 @@ public class ProcessingContainer implements IProcessingContainer {
 
         InputAgent inputAgent = node.getInputAgentInternal();
 
-        ChannelSet<IChannel> inputs = inputAgent.getChannelSet();
+        ChannelSet<InputChannel> inputs = inputAgent.getChannelSet();
         if (inputs != null && inputs.getRegisteredChannelIds() != null
                 && !inputs.getRegisteredChannelIds().isEmpty()) {
             for (String inputId : inputs.getRegisteredChannelIds()) {
-                BaseChannel input = inputs.getChannelInternal(inputId);
+                InputChannel input = inputs.getChannel(inputId);
                 inputChannels.put(input.getChannelId(), input);
             }
         } else {
@@ -75,12 +74,12 @@ public class ProcessingContainer implements IProcessingContainer {
     }
 
     @Override
-    public Map<String, BaseChannel> getInputChannels() {
+    public Map<String, InputChannel> getInputChannels() {
         return inputChannels;
     }
 
     @Override
-    public Map<String, BaseChannel> getOutputChannels() {
+    public Map<String, OutputChannel> getOutputChannels() {
         return outputChannels;
     }
 

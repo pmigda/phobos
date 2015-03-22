@@ -1,8 +1,9 @@
 package pl.treefrog.phobos.transport.mem.async;
 
-import pl.treefrog.phobos.core.api.ITransport;
+import pl.treefrog.phobos.core.api.IInputTransport;
 import pl.treefrog.phobos.core.handler.IMessageHandler;
 import pl.treefrog.phobos.core.message.Message;
+import pl.treefrog.phobos.exception.PlatformException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -10,37 +11,25 @@ import pl.treefrog.phobos.core.message.Message;
  * created : 2015-03-03
  * license : See the "LICENSE.txt" file for the full terms of the license governing this code.
  */
-public class QueueTransport implements ITransport {
-
-    private String queueName;
-    private QueueManager queManager;
+public class QueueInputTransport extends AbstractQueueTransport implements IInputTransport {
 
     @Override
-    public void init(IMessageHandler messageHandler) {
+    public void init(IMessageHandler messageHandler) throws PlatformException {
         //NOP async processing
     }
 
     @Override
-    public void start(String channelId) {
+    public void start(String channelId) throws PlatformException {
         queueName = channelId;
     }
 
     @Override
-    public void stop() {
-
+    public void stop() throws PlatformException {
+        //NOP
     }
 
     @Override
-    public void sendMessage(Message msg) {
-        queManager.getQueue(queueName).add(msg);
-    }
-
-    @Override
-    public Message readMessage() {
+    public Message readMessage() throws PlatformException {
         return queManager.getQueue(queueName).poll();
-    }
-
-    public void setQueManager(QueueManager queManager) {
-        this.queManager = queManager;
     }
 }

@@ -3,12 +3,10 @@ package pl.treefrog.phobos;
 import pl.treefrog.phobos.core.ProcessingNode;
 import pl.treefrog.phobos.core.api.IExecutor;
 import pl.treefrog.phobos.core.channel.ChannelSet;
+import pl.treefrog.phobos.core.channel.input.InputChannel;
 import pl.treefrog.phobos.core.channel.input.async.AsyncInputAgent;
-import pl.treefrog.phobos.core.channel.input.async.AsyncInputChannel;
-import pl.treefrog.phobos.core.channel.input.async.IAsyncInputChannel;
 import pl.treefrog.phobos.core.channel.input.async.listener.RoundRobinListener;
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
-import pl.treefrog.phobos.core.channel.output.IOutputChannel;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputChannel;
 import pl.treefrog.phobos.core.message.Message;
@@ -16,8 +14,9 @@ import pl.treefrog.phobos.core.message.PayloadMessage;
 import pl.treefrog.phobos.core.processor.BaseProcessor;
 import pl.treefrog.phobos.core.state.context.ProcessingContext;
 import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.transport.mem.async.QueueInputTransport;
 import pl.treefrog.phobos.transport.mem.async.QueueManager;
-import pl.treefrog.phobos.transport.mem.async.QueueTransport;
+import pl.treefrog.phobos.transport.mem.async.QueueOutputTransport;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,19 +30,26 @@ public class ProcWithControlRunner {
         queueManager.createQueue("A2A", 100);
         queueManager.createQueue("controlChannel", 100);
 
-        QueueTransport queTransport = new QueueTransport();
-        queTransport.setQueManager(queueManager);
+        QueueInputTransport queInputTransport = new QueueInputTransport();
+        queInputTransport.setQueManager(queueManager);
 
-        QueueTransport controlQueTransport = new QueueTransport();
-        controlQueTransport.setQueManager(queueManager);
+        QueueOutputTransport queOutputTransport = new QueueOutputTransport();
+        queOutputTransport.setQueManager(queueManager);
+
+        QueueInputTransport controlQueInputTransport = new QueueInputTransport();
+        controlQueInputTransport.setQueManager(queueManager);
+
+        QueueOutputTransport controlQueOutputTransport = new QueueOutputTransport();
+        controlQueOutputTransport.setQueManager(queueManager);
+
 
         //create base processing topology
         //input
-        AsyncInputChannel inputChannel = new AsyncInputChannel();
+        InputChannel inputChannel = new InputChannel();
         inputChannel.setChannelId("A2A");
-        inputChannel.setTransport(queTransport);
+        inputChannel.registerInputTransport(queInputTransport);
 
-        ChannelSet<IAsyncInputChannel> inputChannelSet = new ChannelSet<>();
+        ChannelSet<InputChannel> inputChannelSet = new ChannelSet<>();
         inputChannelSet.registerChannel(inputChannel);
 
         AsyncInputAgent inputAgent = new AsyncInputAgent();
@@ -53,13 +59,13 @@ public class ProcWithControlRunner {
         //output
         OutputChannel outputChannel = new OutputChannel();
         outputChannel.setChannelId("A2A");
-        outputChannel.setTransport(queTransport);
+        outputChannel.registerOutputTransport(queOutputTransport);
 
         OutputChannel controlChannel = new OutputChannel();
         controlChannel.setChannelId("controlChannel");
-        controlChannel.setTransport(controlQueTransport);
+        controlChannel.registerOutputTransport(controlQueOutputTransport);
 
-        ChannelSet<IOutputChannel> outputChannelSet = new ChannelSet<>();
+        ChannelSet<OutputChannel> outputChannelSet = new ChannelSet<>();
         outputChannelSet.registerChannel(outputChannel);
         outputChannelSet.registerChannel(controlChannel);
 
@@ -114,11 +120,11 @@ public class ProcWithControlRunner {
         procNode.start();
 
         //controller node
-        AsyncInputChannel controlInputChannel = new AsyncInputChannel();
+        InputChannel controlInputChannel = new InputChannel();
         controlInputChannel.setChannelId("controlChannel");
-        controlInputChannel.setTransport(controlQueTransport);
+        controlInputChannel.registerInputTransport(controlQueInputTransport);
 
-        ChannelSet<IAsyncInputChannel> controlInputChannelSet = new ChannelSet<>();
+        ChannelSet<InputChannel> controlInputChannelSet = new ChannelSet<>();
         controlInputChannelSet.registerChannel(controlInputChannel);
 
         AsyncInputAgent controlInputAgent = new AsyncInputAgent();

@@ -6,9 +6,9 @@ package pl.treefrog.phobos.exception;
  * created : 2015-03-03
  * license : See the "LICENSE.txt" file for the full terms of the license governing this code.
  */
-public class InvalidInputException extends PlatformException {
+public class PhobosInvalidInputException extends PhobosException {
 
-    public InvalidInputException(String s) {
+    public PhobosInvalidInputException(String s) {
         super(s);
     }
 

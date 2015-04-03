@@ -2,7 +2,7 @@ package pl.treefrog.phobos.core.channel.input.async.listener;
 
 import pl.treefrog.phobos.core.channel.input.IInputAgent;
 import pl.treefrog.phobos.core.handler.IMessageHandler;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -16,10 +16,10 @@ import pl.treefrog.phobos.exception.PlatformException;
  */
 public interface IMessageListener {
 
-    void init(IMessageHandler handler, IInputAgent inputAgent) throws PlatformException;
+    void init(IMessageHandler handler, IInputAgent inputAgent) throws PhobosException;
 
-    void start() throws PlatformException;
+    void start() throws PhobosException;
 
-    void stop() throws PlatformException;
+    void stop() throws PhobosException;
 
 }

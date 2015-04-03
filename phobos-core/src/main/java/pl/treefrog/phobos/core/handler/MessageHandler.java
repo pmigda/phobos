@@ -8,7 +8,7 @@ import pl.treefrog.phobos.core.message.Message;
 import pl.treefrog.phobos.core.processor.IProcessor;
 import pl.treefrog.phobos.core.state.context.ProcessingContext;
 import pl.treefrog.phobos.exception.PhobosAssert;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -16,14 +16,6 @@ import pl.treefrog.phobos.exception.PlatformException;
  * created : 2015-03-03
  * license : See the "LICENSE.txt" file for the full terms of the license governing this code.
  */
-
-/*
- *  Message Handler is processing entry point of the processing node.
- *  It's triggered by message listener (in case active thread is managed within node) or
- *  by (input) transport when active thread is outside the processing node
- *  Another responsibility of the handler is to recreate processing context (state) and
- *  pass it along processing components path.
- **/
 public class MessageHandler implements IMessageHandler, IComponentLifecycle {
 
     private static final Logger log = LoggerFactory.getLogger(MessageHandler.class);
@@ -32,7 +24,7 @@ public class MessageHandler implements IMessageHandler, IComponentLifecycle {
     protected IProcessor processor;
 
     @Override
-    public void init(IProcessingNode nodeConfig) throws PlatformException {
+    public void init(IProcessingNode nodeConfig) throws PhobosException {
         parentProcNode = nodeConfig;
         PhobosAssert.assertNotNull("Parent processing node must not be null", parentProcNode);
 
@@ -54,7 +46,8 @@ public class MessageHandler implements IMessageHandler, IComponentLifecycle {
     }
 
     @Override
-    public void processMessage(Message message) throws PlatformException {
-        processor.processMessage(message, new ProcessingContext());
+    public void processMessage(Message message) throws PhobosException {
+        processor.processMessage(message, new ProcessingContext(parentProcNode.getNodeName()));
     }
+
 }

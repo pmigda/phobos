@@ -1,8 +1,8 @@
 package pl.treefrog.phobos.core.processor;
 
 import pl.treefrog.phobos.core.message.Message;
-import pl.treefrog.phobos.core.state.context.ProcessingContext;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.core.state.context.IProcessingContext;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -12,6 +12,6 @@ import pl.treefrog.phobos.exception.PlatformException;
  */
 public interface IProcessor {
 
-    void processMessage(Message message, ProcessingContext context) throws PlatformException;
+    void processMessage(Message message, IProcessingContext processingContext) throws PhobosException;
 
 }

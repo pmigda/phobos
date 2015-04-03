@@ -7,7 +7,7 @@ import pl.treefrog.phobos.core.api.IOutputTransport;
 import pl.treefrog.phobos.core.channel.AbstractChannel;
 import pl.treefrog.phobos.core.message.Message;
 import pl.treefrog.phobos.exception.PhobosAssert;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -22,7 +22,7 @@ public class OutputChannel extends AbstractChannel implements IOutputChannel {
     protected IOutputTransport outputTransport;
 
     @Override
-    public void init(IProcessingNode nodeConfig) throws PlatformException {
+    public void init(IProcessingNode nodeConfig) throws PhobosException {
         super.init(nodeConfig);
 
         log.info("[" + parentProcNode.getNodeName() + "][" + channelId + "] Initializing output channel");
@@ -32,19 +32,19 @@ public class OutputChannel extends AbstractChannel implements IOutputChannel {
     }
 
     @Override
-    public void start() throws PlatformException {
+    public void start() throws PhobosException {
         log.info("[" + parentProcNode.getNodeName() + "][" + channelId + "] starting output channel");
         outputTransport.start(channelId);
     }
 
     @Override
-    public void stop() throws PlatformException {
+    public void stop() throws PhobosException {
         log.info("[" + parentProcNode.getNodeName() + "][" + channelId + "] stopping output channel");
         outputTransport.stop();
     }
 
     @Override
-    public void sendMessage(Message msg) throws PlatformException {
+    public void sendMessage(Message msg) throws PhobosException {
         outputTransport.sendMessage(msg);
     }
 

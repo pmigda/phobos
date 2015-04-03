@@ -1,7 +1,7 @@
 package pl.treefrog.phobos.core.channel.input;
 
 import pl.treefrog.phobos.core.message.Message;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -11,8 +11,8 @@ import pl.treefrog.phobos.exception.PlatformException;
  */
 public interface IInputAgentPhaseListener<M extends Message> {
 
-    void beforeReadPhase() throws PlatformException;
+    void beforeReadPhase() throws PhobosException;
 
-    void afterReadPhase(M message) throws PlatformException;
+    void afterReadPhase(M message) throws PhobosException;
 
 }

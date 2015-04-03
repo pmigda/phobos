@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.IComponentLifecycle;
 import pl.treefrog.phobos.core.IProcessingNode;
 import pl.treefrog.phobos.exception.PhobosAssert;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -21,7 +21,7 @@ public abstract class AbstractChannel implements IChannel, IComponentLifecycle {
     protected IProcessingNode parentProcNode;
 
     @Override
-    public void init(IProcessingNode nodeConfig) throws PlatformException {
+    public void init(IProcessingNode nodeConfig) throws PhobosException {
         parentProcNode = nodeConfig;
         PhobosAssert.assertNotNull("Parent processing node must not be null", parentProcNode);
     }

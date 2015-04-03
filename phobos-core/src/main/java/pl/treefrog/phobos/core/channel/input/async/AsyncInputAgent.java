@@ -6,7 +6,7 @@ import pl.treefrog.phobos.core.IProcessingNode;
 import pl.treefrog.phobos.core.channel.input.InputAgent;
 import pl.treefrog.phobos.core.channel.input.async.listener.IMessageListener;
 import pl.treefrog.phobos.exception.PhobosAssert;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -21,7 +21,7 @@ public class AsyncInputAgent extends InputAgent {
     protected IMessageListener messageListener;
 
     @Override
-    public void init(IProcessingNode nodeConfig) throws PlatformException {
+    public void init(IProcessingNode nodeConfig) throws PhobosException {
         super.init(nodeConfig);
 
         log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] Initializing async input agent");
@@ -31,7 +31,7 @@ public class AsyncInputAgent extends InputAgent {
     }
 
     @Override
-    public void start() throws PlatformException {
+    public void start() throws PhobosException {
         log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] starting async input agent");
         super.start();
 
@@ -41,7 +41,7 @@ public class AsyncInputAgent extends InputAgent {
     }
 
     @Override
-    public void stop() throws PlatformException {
+    public void stop() throws PhobosException {
         log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] stopping async input agent");
         super.stop();
 

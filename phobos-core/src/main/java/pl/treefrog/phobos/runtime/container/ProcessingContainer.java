@@ -8,7 +8,7 @@ import pl.treefrog.phobos.core.channel.input.InputAgent;
 import pl.treefrog.phobos.core.channel.input.InputChannel;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputChannel;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -84,7 +84,7 @@ public class ProcessingContainer implements IProcessingContainer {
     }
 
     @Override
-    public void init() throws PlatformException {
+    public void init() throws PhobosException {
         log.info("INIT processing phase triggered");
         for (ProcessingNode procNode : processingNodes.values()) {
             procNode.init();
@@ -92,7 +92,7 @@ public class ProcessingContainer implements IProcessingContainer {
     }
 
     @Override
-    public void start() throws PlatformException {
+    public void start() throws PhobosException {
         log.info("START processing phase triggered");
         for (ProcessingNode procNode : processingNodes.values()) {
             procNode.start();
@@ -100,7 +100,7 @@ public class ProcessingContainer implements IProcessingContainer {
     }
 
     @Override
-    public void stop() throws PlatformException {
+    public void stop() throws PhobosException {
         log.info("STOP processing phase triggered");
         for (ProcessingNode procNode : processingNodes.values()) {
             procNode.stop();

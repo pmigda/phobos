@@ -7,7 +7,7 @@ import pl.treefrog.phobos.core.api.IInputTransport;
 import pl.treefrog.phobos.core.channel.AbstractChannel;
 import pl.treefrog.phobos.core.message.Message;
 import pl.treefrog.phobos.exception.PhobosAssert;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -22,7 +22,7 @@ public class InputChannel extends AbstractChannel implements IInputChannel {
     protected IInputTransport inputTransport;
 
     @Override
-    public void init(IProcessingNode nodeConfig) throws PlatformException {
+    public void init(IProcessingNode nodeConfig) throws PhobosException {
         super.init(nodeConfig);
 
         log.info("[" + parentProcNode.getNodeName() + "][" + channelId + "] Initializing input channel");
@@ -32,19 +32,19 @@ public class InputChannel extends AbstractChannel implements IInputChannel {
     }
 
     @Override
-    public void start() throws PlatformException {
+    public void start() throws PhobosException {
         log.info("[" + parentProcNode.getNodeName() + "][" + channelId + "] starting input channel");
         inputTransport.start(channelId);
     }
 
     @Override
-    public void stop() throws PlatformException {
+    public void stop() throws PhobosException {
         log.info("[" + parentProcNode.getNodeName() + "][" + channelId + "] stopping input channel");
         inputTransport.stop();
     }
 
     @Override
-    public Message readMessage() throws PlatformException {
+    public Message readMessage() throws PhobosException {
         return inputTransport.readMessage();
     }
 

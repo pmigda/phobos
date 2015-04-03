@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.IComponentLifecycle;
 import pl.treefrog.phobos.core.IProcessingNode;
 import pl.treefrog.phobos.exception.PhobosAssert;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public abstract class AbstractChannelAgent<C extends AbstractChannel> implements
     protected ChannelSet<C> channelSet;
 
     @Override
-    public void init(IProcessingNode nodeConfig) throws PlatformException {
+    public void init(IProcessingNode nodeConfig) throws PhobosException {
         parentProcNode = nodeConfig;
         PhobosAssert.assertNotNull("Parent processing node must not be null", parentProcNode);
 
@@ -43,7 +43,7 @@ public abstract class AbstractChannelAgent<C extends AbstractChannel> implements
     }
 
     @Override
-    public void start() throws PlatformException {
+    public void start() throws PhobosException {
         log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] starting agent");
         if (channelSet != null) {
             channelSet.start();
@@ -51,7 +51,7 @@ public abstract class AbstractChannelAgent<C extends AbstractChannel> implements
     }
 
     @Override
-    public void stop() throws PlatformException {
+    public void stop() throws PhobosException {
         log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] stopping agent");
         if (channelSet != null) {
             channelSet.stop();

@@ -7,7 +7,7 @@ import pl.treefrog.phobos.core.channel.AbstractChannelAgent;
 import pl.treefrog.phobos.core.handler.IMessageHandler;
 import pl.treefrog.phobos.core.message.Message;
 import pl.treefrog.phobos.exception.PhobosAssert;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class InputAgent extends AbstractChannelAgent<InputChannel> implements II
     protected IMessageHandler messageHandler;
 
     @Override
-    public void init(IProcessingNode nodeConfig) throws PlatformException {
+    public void init(IProcessingNode nodeConfig) throws PhobosException {
         super.init(nodeConfig);
 
         log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] Initializing input agent");
@@ -40,7 +40,7 @@ public class InputAgent extends AbstractChannelAgent<InputChannel> implements II
     }
 
     @Override
-    public Message readMessage(String channelId) throws PlatformException {
+    public Message readMessage(String channelId) throws PhobosException {
         IInputChannel input = channelSet.getChannel(channelId);
         Message result = null;
 

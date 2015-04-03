@@ -8,10 +8,15 @@ import pl.treefrog.phobos.core.channel.output.IOutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
 import pl.treefrog.phobos.core.handler.IMessageHandler;
 import pl.treefrog.phobos.core.handler.MessageHandler;
+import pl.treefrog.phobos.core.handler.StatefulMessageHandler;
+import pl.treefrog.phobos.core.message.factory.IMessageFactory;
+import pl.treefrog.phobos.core.message.factory.MessageFactory;
 import pl.treefrog.phobos.core.processor.AbstractProcessor;
 import pl.treefrog.phobos.core.processor.IProcessor;
+import pl.treefrog.phobos.core.state.IProcessingStateController;
+import pl.treefrog.phobos.core.state.ProcessingStateController;
 import pl.treefrog.phobos.exception.PhobosAssert;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -30,7 +35,9 @@ public class ProcessingNode implements IProcessingNode {
     private String nodeName;
     private String instanceId;
 
-    private MessageHandler messageHandler = new MessageHandler();
+    private IMessageFactory messageFactory = new MessageFactory(); //default factory
+    private ProcessingStateController processingStateController = new ProcessingStateController();
+    private MessageHandler messageHandler = new StatefulMessageHandler();
     private InputAgent inputAgent;
     private OutputAgent outputAgent;
     private AbstractProcessor processor;
@@ -39,16 +46,19 @@ public class ProcessingNode implements IProcessingNode {
         this.nodeName = nodeName;
     }
 
-    public void init() throws PlatformException {
+    public void init() throws PhobosException {
 
         log.info("[" + nodeName + "] Beginning INIT lifecycle phase...");
 
-        if (messageHandler != null) {
-            log.info("[" + nodeName + "] Initializing message handler " + messageHandler.getClass().getName());
-            messageHandler.init(this);
-        } else {
-            log.warn("[" + nodeName + "] No message handler provided");
-        }
+        PhobosAssert.assertNotNull("[" + nodeName + "] No message factory provided. Message factory is a mandatory component for processing", messageFactory);
+
+        PhobosAssert.assertNotNull("[" + nodeName + "] No state controller provided. Processing state controller is a mandatory component for processing", processingStateController);
+        log.info("[" + nodeName + "] Initializing processing state controller " + processingStateController.getClass().getName());
+        processingStateController.init(this);
+
+        PhobosAssert.assertNotNull("[" + nodeName + "] No message handler provided. Message handler is a mandatory component for processing", messageHandler);
+        log.info("[" + nodeName + "] Initializing message handler " + messageHandler.getClass().getName());
+        messageHandler.init(this);
 
         if (outputAgent != null) {
             log.info("[" + nodeName + "] Initializing outputAgent " + outputAgent.getClass().getName());
@@ -57,10 +67,6 @@ public class ProcessingNode implements IProcessingNode {
             log.warn("[" + nodeName + "] No outputAgent provided");
         }
 
-        PhobosAssert.assertNotNull("[" + nodeName + "] No processor provided. Processor is a mandatory component for processing", processor);
-        log.info("[" + nodeName + "] Initializing processor " + processor.getClass().getName());
-        processor.init(this);
-
         if (inputAgent != null) {
             log.info("[" + nodeName + "] Initializing inputAgent " + inputAgent.getClass().getName());
             inputAgent.init(this);
@@ -68,62 +74,85 @@ public class ProcessingNode implements IProcessingNode {
             log.warn("[" + nodeName + "] No inputAgent provided");
         }
 
+        PhobosAssert.assertNotNull("[" + nodeName + "] No processor provided. Processor is a mandatory component for processing", processor);
+        log.info("[" + nodeName + "] Initializing processor " + processor.getClass().getName());
+        processor.init(this);
+
         log.info("[" + nodeName + "] INIT lifecycle phase finished");
 
     }
 
-    public void start() throws PlatformException {
+    public void start() throws PhobosException {
 
         log.info("[" + nodeName + "] Beginning START lifecycle phase...");
 
-        if (messageHandler != null) {
-            log.info("[" + messageHandler + "] Starting message handler");
-            messageHandler.start();
-        }
+        PhobosAssert.assertNotNull("[" + nodeName + "] No state controller provided. Processing state controller is a mandatory component for processing", processingStateController);
+        log.info("[" + nodeName + "] Starting processing state controller");
+        processingStateController.start();
+
+        PhobosAssert.assertNotNull("[" + nodeName + "] No message handler provided. Message handler is a mandatory component for processing", messageHandler);
+        log.info("[" + messageHandler + "] Starting message handler");
+        messageHandler.start();
 
         if (outputAgent != null) {
             log.info("[" + nodeName + "] Starting outputAgent");
             outputAgent.start();
         }
 
-        PhobosAssert.assertNotNull("[" + nodeName + "] No processor provided. Processor is a mandatory component for processing", processor);
-        log.info("[" + nodeName + "] Starting processor");
-        processor.start();
-
-
         if (inputAgent != null) {
             log.info("[" + nodeName + "] Starting inputAgent");
             inputAgent.start();
         }
 
+        PhobosAssert.assertNotNull("[" + nodeName + "] No processor provided. Processor is a mandatory component for processing", processor);
+        log.info("[" + nodeName + "] Starting processor");
+        processor.start();
+
         log.info("[" + nodeName + "] START lifecycle phase finished");
     }
 
-    public void stop() throws PlatformException {
+    public void stop() throws PhobosException {
 
         log.info("[" + nodeName + "] Beginning STOP lifecycle phase...");
 
-        if (messageHandler != null) {
-            log.info("[" + nodeName + "] Stopping message handler");
-            messageHandler.stop();
-        }
+        PhobosAssert.assertNotNull("[" + nodeName + "] No state controller provided. Processing state controller is a mandatory component for processing", processingStateController);
+        log.info("[" + nodeName + "] Stopping processing state controller");
+        processingStateController.start();
+
+        PhobosAssert.assertNotNull("[" + nodeName + "] No message handler provided. Message handler is a mandatory component for processing", messageHandler);
+        log.info("[" + nodeName + "] Stopping message handler");
+        messageHandler.start();
 
         if (outputAgent != null) {
             log.info("[" + nodeName + "] Stopping outputAgent");
             outputAgent.stop();
         }
 
-        PhobosAssert.assertNotNull("[" + nodeName + "] No processor provided. Processor is a mandatory component for processing", processor);
-        log.info("[" + nodeName + "] Stopping processor");
-        processor.stop();
-
-
         if (inputAgent != null) {
             log.info("[" + nodeName + "] Stopping inputAgent");
             inputAgent.stop();
         }
 
+        PhobosAssert.assertNotNull("[" + nodeName + "] No processor provided. Processor is a mandatory component for processing", processor);
+        log.info("[" + nodeName + "] Stopping processor");
+        processor.stop();
+
         log.info("[" + nodeName + "] STOP lifecycle phase finished");
+    }
+
+    @Override
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    @Override
+    public IMessageFactory getMessageFactory() {
+        return messageFactory;
+    }
+
+    @Override
+    public IProcessingStateController getProcessingStateController() {
+        return processingStateController;
     }
 
     @Override
@@ -137,21 +166,17 @@ public class ProcessingNode implements IProcessingNode {
     }
 
     @Override
-    public IProcessor getProcessor() {
-        return processor;
-    }
-
-    @Override
     public IOutputAgent getOutputAgent() {
         return outputAgent;
     }
 
     @Override
-    public String getNodeName() {
-        return nodeName;
+    public IProcessor getProcessor() {
+        return processor;
     }
 
-    //getters & setters
+
+    //IoC getters & setters
     public void setNodeName(String nodeName) {
         this.nodeName = nodeName;
     }
@@ -164,8 +189,19 @@ public class ProcessingNode implements IProcessingNode {
         this.instanceId = instanceId;
     }
 
+    public void setMessageFactory(IMessageFactory messageFactory) {
+        this.messageFactory = messageFactory;
+    }
 
-    //Internal implementation & IoC management
+    //Internal implementation
+    public ProcessingStateController getProcessingStateControllerInternal() {
+        return processingStateController;
+    }
+
+    public void setProcessingStateControllerInternal(ProcessingStateController processingStateController) {
+        this.processingStateController = processingStateController;
+    }
+
     public MessageHandler getMessageHandlerInternal() {
         return messageHandler;
     }
@@ -173,7 +209,6 @@ public class ProcessingNode implements IProcessingNode {
     public void setMessageHandlerInternal(MessageHandler messageHandler) {
         this.messageHandler = messageHandler;
     }
-
 
     public InputAgent getInputAgentInternal() {
         return inputAgent;

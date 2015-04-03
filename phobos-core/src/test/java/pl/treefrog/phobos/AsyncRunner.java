@@ -9,10 +9,11 @@ import pl.treefrog.phobos.core.channel.input.async.listener.RoundRobinListener;
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputChannel;
+import pl.treefrog.phobos.core.message.ControlHeader;
 import pl.treefrog.phobos.core.message.Message;
 import pl.treefrog.phobos.core.processor.BaseProcessor;
-import pl.treefrog.phobos.core.state.context.ProcessingContext;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.core.state.context.IProcessingContext;
+import pl.treefrog.phobos.exception.PhobosException;
 import pl.treefrog.phobos.transport.mem.async.QueueInputTransport;
 import pl.treefrog.phobos.transport.mem.async.QueueManager;
 import pl.treefrog.phobos.transport.mem.async.QueueOutputTransport;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class AsyncRunner {
 
-    public static void main(String[] args) throws PlatformException {
+    public static void main(String[] args) throws PhobosException {
 
         //in memory queue based mom
         QueueManager queueManager = new QueueManager();
@@ -60,9 +61,9 @@ public class AsyncRunner {
 
         //processor
         BaseProcessor proc = new BaseProcessor("PrintOutProc");
-        proc.setExecutor(new IExecutor() {
+        proc.setExecutor(new IExecutor<Message>() {
             @Override
-            public void processMessage(Message message, IOutputAgent outputAgent, ProcessingContext context) throws PlatformException {
+            public void processMessage(Message message, IOutputAgent outputAgent, IProcessingContext processingContext) throws PhobosException {
                 System.out.println(message.getId());
                 try {
                     Thread.sleep(1000);
@@ -70,12 +71,17 @@ public class AsyncRunner {
                     e.printStackTrace();
                 }
                 message.setId(message.getId() + 1);
-                outputAgent.sendMessage("A2A", message, context);
+                outputAgent.sendMessage("A2A", message, processingContext);
             }
 
             @Override
             public List<String> getRequiredChannelsIds() {
                 return Arrays.asList(new String[]{"A2A"});
+            }
+
+            @Override
+            public boolean acceptsMessage(Message message) {
+                return true;
             }
         });
 
@@ -88,7 +94,8 @@ public class AsyncRunner {
         procNode.init();
         procNode.start();
 
-        Message msg = new Message(666);
+        Message msg = new Message(new ControlHeader());
+        msg.setId(666);
 
         queueManager.getQueue("A2A").add(msg);
     }

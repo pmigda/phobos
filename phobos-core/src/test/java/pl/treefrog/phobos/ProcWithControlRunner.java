@@ -9,11 +9,12 @@ import pl.treefrog.phobos.core.channel.input.async.listener.RoundRobinListener;
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputChannel;
+import pl.treefrog.phobos.core.message.ControlHeader;
 import pl.treefrog.phobos.core.message.Message;
-import pl.treefrog.phobos.core.message.PayloadMessage;
+import pl.treefrog.phobos.core.message.Payload;
 import pl.treefrog.phobos.core.processor.BaseProcessor;
-import pl.treefrog.phobos.core.state.context.ProcessingContext;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.core.state.context.IProcessingContext;
+import pl.treefrog.phobos.exception.PhobosException;
 import pl.treefrog.phobos.transport.mem.async.QueueInputTransport;
 import pl.treefrog.phobos.transport.mem.async.QueueManager;
 import pl.treefrog.phobos.transport.mem.async.QueueOutputTransport;
@@ -21,9 +22,11 @@ import pl.treefrog.phobos.transport.mem.async.QueueOutputTransport;
 import java.util.Arrays;
 import java.util.List;
 
+import static pl.treefrog.phobos.core.message.MessageType.DEFAULT_MESSAGE;
+
 public class ProcWithControlRunner {
 
-    public static void main(String[] args) throws PlatformException {
+    public static void main(String[] args) throws PhobosException {
 
         //in memory queue based mom
         QueueManager queueManager = new QueueManager();
@@ -74,25 +77,30 @@ public class ProcWithControlRunner {
 
         //processor
         BaseProcessor controlProcWrapper = new BaseProcessor("ChainedControlProcAgent");
-        controlProcWrapper.setExecutor(new IExecutor() {
+        controlProcWrapper.setExecutor(new IExecutor<Message>() {
             @Override
-            public void processMessage(Message message, IOutputAgent outputAgent, ProcessingContext context) throws PlatformException {
+            public void processMessage(Message message, IOutputAgent outputAgent, IProcessingContext processingContext) throws PhobosException {
 
-                PayloadMessage<String> ctrlMsg = new PayloadMessage<>(-999);
-                ctrlMsg.setPayload("ControlMsg:" + message.getId());
-                outputAgent.sendMessage("controlChannel", ctrlMsg, context);
+                Message ctrlMsg = outputAgent.createMessage(DEFAULT_MESSAGE, processingContext);
+                ctrlMsg.setPayload(new Payload("ControlMsg:" + message.getId()));
+                outputAgent.sendMessage("controlChannel", ctrlMsg, processingContext);
             }
 
             @Override
             public List<String> getRequiredChannelsIds() {
                 return Arrays.asList(new String[]{"controlChannel"});
             }
+
+            @Override
+            public boolean acceptsMessage(Message message) {
+                return true;
+            }
         });
 
         BaseProcessor proc = new BaseProcessor("PrintOutProc");
-        proc.setExecutor(new IExecutor() {
+        proc.setExecutor(new IExecutor<Message>() {
             @Override
-            public void processMessage(Message message, IOutputAgent outputAgent, ProcessingContext context) throws PlatformException {
+            public void processMessage(Message message, IOutputAgent outputAgent, IProcessingContext processingContext) throws PhobosException {
                 System.out.println("[" + Thread.currentThread().getName() + "]" + message.getId());
                 try {
                     Thread.sleep(1000);
@@ -100,12 +108,17 @@ public class ProcWithControlRunner {
                     e.printStackTrace();
                 }
                 message.setId(message.getId() + 1);
-                outputAgent.sendMessage("A2A", message, context);
+                outputAgent.sendMessage("A2A", message, processingContext);
             }
 
             @Override
             public List<String> getRequiredChannelsIds() {
                 return Arrays.asList(new String[]{"A2A"});
+            }
+
+            @Override
+            public boolean acceptsMessage(Message message) {
+                return true;
             }
         });
 
@@ -135,10 +148,10 @@ public class ProcWithControlRunner {
 
         //control processor
         BaseProcessor controlProcessor = new BaseProcessor("ControlProc");
-        controlProcessor.setExecutor(new IExecutor<PayloadMessage>() {
+        controlProcessor.setExecutor(new IExecutor<Message<ControlHeader, Payload>>() {
             @Override
-            public void processMessage(PayloadMessage message, IOutputAgent outputAgent, ProcessingContext context) {
-                System.out.println("[" + Thread.currentThread().getName() + "]" + message.getPayload());
+            public void processMessage(Message<ControlHeader, Payload> message, IOutputAgent outputAgent, IProcessingContext processingContext) {
+                System.out.println("[" + Thread.currentThread().getName() + "]" + message.getPayload().getContent());
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -150,6 +163,11 @@ public class ProcWithControlRunner {
             public List<String> getRequiredChannelsIds() {
                 return Arrays.asList(new String[]{});
             }
+
+            @Override
+            public boolean acceptsMessage(Message message) {
+                return true;
+            }
         });
 
         //control node
@@ -159,7 +177,8 @@ public class ProcWithControlRunner {
         ctrlNode.init();
         ctrlNode.start();
 
-        Message msg = new Message(666);
+        Message msg = new Message(new ControlHeader());
+        msg.setId(666);
 
         queueManager.getQueue("A2A").add(msg);
     }

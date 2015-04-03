@@ -1,7 +1,7 @@
 package pl.treefrog.phobos.core.channel.input;
 
 import pl.treefrog.phobos.core.message.Message;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 import java.util.List;
 
@@ -15,6 +15,6 @@ public interface IInputAgent {
 
     List<String> getRegisteredChannelIds();
 
-    Message readMessage(String channelId) throws PlatformException;
+    Message readMessage(String channelId) throws PhobosException;
 
 }

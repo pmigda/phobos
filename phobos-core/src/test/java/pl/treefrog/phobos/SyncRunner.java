@@ -8,10 +8,11 @@ import pl.treefrog.phobos.core.channel.input.InputChannel;
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputAgent;
 import pl.treefrog.phobos.core.channel.output.OutputChannel;
+import pl.treefrog.phobos.core.message.ControlHeader;
 import pl.treefrog.phobos.core.message.Message;
 import pl.treefrog.phobos.core.processor.BaseProcessor;
-import pl.treefrog.phobos.core.state.context.ProcessingContext;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.core.state.context.IProcessingContext;
+import pl.treefrog.phobos.exception.PhobosException;
 import pl.treefrog.phobos.transport.mem.sync.DirectCallTransport;
 
 import java.util.Arrays;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class SyncRunner {
 
-    public static void main(String[] args) throws PlatformException {
+    public static void main(String[] args) throws PhobosException {
 
         //create topology
         //Node1 Def
@@ -50,16 +51,21 @@ public class SyncRunner {
 
         //processor 1
         BaseProcessor proc1 = new BaseProcessor("PrintOutProc1");
-        proc1.setExecutor(new IExecutor() {
+        proc1.setExecutor(new IExecutor<Message>() {
             @Override
-            public void processMessage(Message message, IOutputAgent outputAgent, ProcessingContext context) throws PlatformException {
+            public void processMessage(Message message, IOutputAgent outputAgent, IProcessingContext processingContext) throws PhobosException {
                 System.out.println("Node A: " + message.getId());
-                outputAgent.sendMessage("A2B", message, context);
+                outputAgent.sendMessage("A2B", message, processingContext);
             }
 
             @Override
             public List<String> getRequiredChannelsIds() {
                 return Arrays.asList(new String[]{"A2B"});
+            }
+
+            @Override
+            public boolean acceptsMessage(Message message) {
+                return true;
             }
         });
 
@@ -85,15 +91,20 @@ public class SyncRunner {
 
         //processor 2
         BaseProcessor proc2 = new BaseProcessor("PrintOutProc2");
-        proc2.setExecutor(new IExecutor() {
+        proc2.setExecutor(new IExecutor<Message>() {
             @Override
-            public void processMessage(Message message, IOutputAgent outputAgent, ProcessingContext context) {
+            public void processMessage(Message message, IOutputAgent outputAgent, IProcessingContext processingContext) {
                 System.out.println("Node B: " + message.getId());
             }
 
             @Override
             public List<String> getRequiredChannelsIds() {
                 return null;
+            }
+
+            @Override
+            public boolean acceptsMessage(Message message) {
+                return true;
             }
         });
 
@@ -105,7 +116,8 @@ public class SyncRunner {
         procNode.init();
         procNode2.init();
 
-        Message msg = new Message(666);
+        Message msg = new Message(new ControlHeader());
+        msg.setId(666);
 
         tsync_input1.sendMessage(msg);
     }

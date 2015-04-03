@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.IProcessingNode;
 import pl.treefrog.phobos.core.api.IExecutor;
 import pl.treefrog.phobos.core.message.Message;
-import pl.treefrog.phobos.core.state.context.ProcessingContext;
+import pl.treefrog.phobos.core.state.context.IProcessingContext;
 import pl.treefrog.phobos.exception.PhobosAssert;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -30,7 +30,7 @@ public class BaseProcessor extends AbstractProcessor {
     }
 
     @Override
-    public void init(IProcessingNode nodeConfig) throws PlatformException {
+    public void init(IProcessingNode nodeConfig) throws PhobosException {
         super.init(nodeConfig);
 
         log.info("[" + parentProcNode.getNodeName() + "][" + processorId + "] Initializing base processor");
@@ -45,13 +45,13 @@ public class BaseProcessor extends AbstractProcessor {
     }
 
     @Override
-    public void processMessage(Message message, ProcessingContext context) throws PlatformException {
-        if (executor != null) {
-            executor.processMessage(message, outputAgent, context);
+    public void processMessage(Message message, IProcessingContext processingContext) throws PhobosException {
+        if (executor != null && executor.acceptsMessage(message)) {
+            executor.processMessage(message, outputAgent, processingContext);
         } else {
             log.error("[" + parentProcNode.getNodeName() + "][" + processorId + "] No executor in place while processing message");
         }
-        forwardMessage(message, context);
+        forwardMessage(message, processingContext);
     }
 
     //getters & setters

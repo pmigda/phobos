@@ -3,7 +3,7 @@ package pl.treefrog.phobos.executor;
 import pl.treefrog.phobos.core.api.IExecutor;
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
 import pl.treefrog.phobos.core.message.Message;
-import pl.treefrog.phobos.core.state.context.ProcessingContext;
+import pl.treefrog.phobos.core.state.context.IProcessingContext;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,10 +18,10 @@ import java.util.List;
 /**
  * Basic processing executor example. It prints out message id, no output channels in use.
  */
-public class PrintExecutor implements IExecutor {
+public class PrintExecutor implements IExecutor<Message> {
 
     @Override
-    public void processMessage(Message message, IOutputAgent outputAgent, ProcessingContext context) {
+    public void processMessage(Message message, IOutputAgent outputAgent, IProcessingContext processingContext) {
         System.out.println(message.getId());
     }
 
@@ -30,4 +30,8 @@ public class PrintExecutor implements IExecutor {
         return new LinkedList<>();
     }
 
+    @Override
+    public boolean acceptsMessage(Message message) {
+        return true;
+    }
 }

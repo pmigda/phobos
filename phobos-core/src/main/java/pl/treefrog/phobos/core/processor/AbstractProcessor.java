@@ -6,9 +6,9 @@ import pl.treefrog.phobos.core.IComponentLifecycle;
 import pl.treefrog.phobos.core.IProcessingNode;
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
 import pl.treefrog.phobos.core.message.Message;
-import pl.treefrog.phobos.core.state.context.ProcessingContext;
+import pl.treefrog.phobos.core.state.context.IProcessingContext;
 import pl.treefrog.phobos.exception.PhobosAssert;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -24,14 +24,15 @@ public abstract class AbstractProcessor implements IProcessor, IComponentLifecyc
     protected IProcessingNode parentProcNode;
     protected IOutputAgent outputAgent;
 
-    private AbstractProcessor nextProcessor;
+    protected AbstractProcessor nextProcessor;
+    protected IForwardPredicate forwardPredicate = new AlwaysForwardPredicate();
 
     protected AbstractProcessor(String processorId) {
         this.processorId = processorId;
     }
 
     @Override
-    public void init(IProcessingNode nodeConfig) throws PlatformException {
+    public void init(IProcessingNode nodeConfig) throws PhobosException {
         parentProcNode = nodeConfig;
         PhobosAssert.assertNotNull("Parent processing node must not be null", parentProcNode);
 
@@ -47,15 +48,12 @@ public abstract class AbstractProcessor implements IProcessor, IComponentLifecyc
         }
     }
 
-    protected void forwardMessage(Message message, ProcessingContext context) throws PlatformException {
+    protected void forwardMessage(Message message, IProcessingContext processingContext) throws PhobosException {
         //filter out messages by message type if necessary
-        if (nextProcessor != null && acceptMessage(message)) {
-            nextProcessor.processMessage(message, context);
+        if (forwardPredicate.shouldForward(message, processingContext) &&
+                nextProcessor != null) {
+            nextProcessor.processMessage(message, processingContext);
         }
-    }
-
-    protected boolean acceptMessage(Message message) {
-        return true;
     }
 
     @Override
@@ -77,4 +75,7 @@ public abstract class AbstractProcessor implements IProcessor, IComponentLifecyc
         this.nextProcessor = nextProcessor;
     }
 
+    public void setForwardPredicate(IForwardPredicate forwardPredicate) {
+        this.forwardPredicate = forwardPredicate;
+    }
 }

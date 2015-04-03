@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.IComponentLifecycle;
 import pl.treefrog.phobos.core.IProcessingNode;
 import pl.treefrog.phobos.exception.PhobosAssert;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -31,7 +31,7 @@ public class ChannelSet<T extends AbstractChannel> implements IChannelSet<T>, IC
     protected Map<String, T> channels = new HashMap<>();
 
     @Override
-    public void init(IProcessingNode nodeConfig) throws PlatformException {
+    public void init(IProcessingNode nodeConfig) throws PhobosException {
         parentProcNode = nodeConfig;
         PhobosAssert.assertNotNull("Parent processing node must not be null", parentProcNode);
 
@@ -43,7 +43,7 @@ public class ChannelSet<T extends AbstractChannel> implements IChannelSet<T>, IC
     }
 
     @Override
-    public void start() throws PlatformException {
+    public void start() throws PhobosException {
         log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] starting channel set");
 
         for (AbstractChannel channel : channels.values()) {
@@ -52,7 +52,7 @@ public class ChannelSet<T extends AbstractChannel> implements IChannelSet<T>, IC
     }
 
     @Override
-    public void stop() throws PlatformException {
+    public void stop() throws PhobosException {
         log.info("[" + parentProcNode.getNodeName() + "][" + this.hashCode() + "] stopping channel set");
 
         for (AbstractChannel channel : channels.values()) {

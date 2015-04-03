@@ -3,7 +3,7 @@ package pl.treefrog.phobos.runtime.container;
 import pl.treefrog.phobos.core.ProcessingNode;
 import pl.treefrog.phobos.core.channel.input.InputChannel;
 import pl.treefrog.phobos.core.channel.output.OutputChannel;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 import java.util.Map;
 
@@ -22,9 +22,9 @@ public interface IProcessingContainer {
 
     Map<String, OutputChannel> getOutputChannels();
 
-    void init() throws PlatformException;
+    void init() throws PhobosException;
 
-    void start() throws PlatformException;
+    void start() throws PhobosException;
 
-    void stop() throws PlatformException;
+    void stop() throws PhobosException;
 }

@@ -1,7 +1,7 @@
 package pl.treefrog.phobos.core.api;
 
 import pl.treefrog.phobos.core.message.Message;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -11,12 +11,12 @@ import pl.treefrog.phobos.exception.PlatformException;
  */
 public interface IOutputTransport {
 
-    void init() throws PlatformException;
+    void init() throws PhobosException;
 
-    void start(String channelId) throws PlatformException;
+    void start(String channelId) throws PhobosException;
 
-    void stop() throws PlatformException;
+    void stop() throws PhobosException;
 
-    void sendMessage(Message msg) throws PlatformException;
+    void sendMessage(Message msg) throws PhobosException;
 
 }

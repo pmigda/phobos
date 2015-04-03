@@ -1,6 +1,6 @@
 package pl.treefrog.phobos.core;
 
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -10,10 +10,10 @@ import pl.treefrog.phobos.exception.PlatformException;
  */
 public interface IComponentLifecycle {
 
-    void init(IProcessingNode nodeConfig) throws PlatformException;
+    void init(IProcessingNode nodeConfig) throws PhobosException;
 
-    void start() throws PlatformException;
+    void start() throws PhobosException;
 
-    void stop() throws PlatformException;
+    void stop() throws PhobosException;
 
 }

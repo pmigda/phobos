@@ -2,7 +2,7 @@ package pl.treefrog.phobos.core.channel.input;
 
 import pl.treefrog.phobos.core.channel.IChannel;
 import pl.treefrog.phobos.core.message.Message;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -12,6 +12,6 @@ import pl.treefrog.phobos.exception.PlatformException;
  */
 public interface IInputChannel extends IChannel {
 
-    Message readMessage() throws PlatformException;
+    Message readMessage() throws PhobosException;
 
 }

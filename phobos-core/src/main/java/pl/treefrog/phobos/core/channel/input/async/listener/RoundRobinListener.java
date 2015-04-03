@@ -6,7 +6,7 @@ import pl.treefrog.phobos.core.channel.input.IInputAgent;
 import pl.treefrog.phobos.core.handler.IMessageHandler;
 import pl.treefrog.phobos.core.message.Message;
 import pl.treefrog.phobos.exception.PhobosAssert;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -30,7 +30,7 @@ public class RoundRobinListener implements IMessageListener {
     private IInputAgent inputAgent;
 
     @Override
-    public void init(IMessageHandler handler, IInputAgent inputAgent) throws PlatformException {
+    public void init(IMessageHandler handler, IInputAgent inputAgent) throws PhobosException {
         log.info("[" + this.hashCode() + "] Initializing round robin listener");
 
         this.messageHandler = handler;
@@ -43,12 +43,12 @@ public class RoundRobinListener implements IMessageListener {
     @Override
     public void start() {
         log.info("[" + this.hashCode() + "] starting round robin listener");
-        Thread thread = new Thread(() -> {
-            while (true) {
 
-                /* pretty dumb implementation for now,
-                having blocking queue and at least 2 inputs very likely deadlock to occur */
-                for (String inputTopic : inputAgent.getRegisteredChannelIds()) {
+        for (String inputTopic : inputAgent.getRegisteredChannelIds()) {
+
+            Thread thread = new Thread(() -> {
+                while (true) {
+
                     try {
                         Message msg = inputAgent.readMessage(inputTopic);
 
@@ -56,14 +56,15 @@ public class RoundRobinListener implements IMessageListener {
                             messageHandler.processMessage(msg);
                         }
 
-                    } catch (PlatformException e) {
+                    } catch (PhobosException e) {
                         log.error("Listener exception: " + e.getMessage());
                     }
                 }
-            }
-        });
 
-        thread.start();
+            });
+
+            thread.start();
+        }
     }
 
     @Override

@@ -2,7 +2,7 @@ package pl.treefrog.phobos.transport.mem.async;
 
 import pl.treefrog.phobos.core.api.IOutputTransport;
 import pl.treefrog.phobos.core.message.Message;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -13,22 +13,22 @@ import pl.treefrog.phobos.exception.PlatformException;
 public class QueueOutputTransport extends AbstractQueueTransport implements IOutputTransport {
 
     @Override
-    public void init() throws PlatformException {
+    public void init() throws PhobosException {
         //NOP
     }
 
     @Override
-    public void start(String channelId) throws PlatformException {
+    public void start(String channelId) throws PhobosException {
         queueName = channelId;
     }
 
     @Override
-    public void stop() throws PlatformException {
+    public void stop() throws PhobosException {
 
     }
 
     @Override
-    public void sendMessage(Message msg) throws PlatformException {
+    public void sendMessage(Message msg) throws PhobosException {
         queManager.getQueue(queueName).add(msg);
     }
 }

@@ -4,7 +4,7 @@ import pl.treefrog.phobos.core.api.IInputTransport;
 import pl.treefrog.phobos.core.api.IOutputTransport;
 import pl.treefrog.phobos.core.handler.IMessageHandler;
 import pl.treefrog.phobos.core.message.Message;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -22,7 +22,7 @@ public class DirectCallTransport implements IInputTransport, IOutputTransport {
     }
 
     @Override
-    public void init() throws PlatformException {
+    public void init() throws PhobosException {
         //NOP - init output transport
     }
 
@@ -37,7 +37,7 @@ public class DirectCallTransport implements IInputTransport, IOutputTransport {
     }
 
     @Override
-    public void sendMessage(Message msg) throws PlatformException {
+    public void sendMessage(Message msg) throws PhobosException {
         messageHandler.processMessage(msg);
     }
 

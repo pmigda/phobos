@@ -1,7 +1,7 @@
 package pl.treefrog.phobos.runtime.definition.parser;
 
 import org.apache.commons.lang.StringUtils;
-import pl.treefrog.phobos.exception.InvalidInputException;
+import pl.treefrog.phobos.exception.PhobosInvalidInputException;
 import pl.treefrog.phobos.runtime.definition.EdgeDef;
 import pl.treefrog.phobos.runtime.definition.ProcNodeDef;
 import pl.treefrog.phobos.runtime.definition.TopologyDefGraph;
@@ -33,7 +33,7 @@ public class SimpleTopologyDefParser implements ITopologyDefParser {
     }
 
     @Override
-    public TopologyDefGraph parse(File input) throws IOException, InvalidInputException {
+    public TopologyDefGraph parse(File input) throws IOException, PhobosInvalidInputException {
         BufferedReader inputReader = new BufferedReader(new FileReader(input));
         List<String> defInputList = new LinkedList<>();
         for (String inputLine; (inputLine = inputReader.readLine()) != null; ) {
@@ -45,7 +45,7 @@ public class SimpleTopologyDefParser implements ITopologyDefParser {
     }
 
     @Override
-    public TopologyDefGraph parse(List<String> input) throws InvalidInputException {
+    public TopologyDefGraph parse(List<String> input) throws PhobosInvalidInputException {
         TopologyDefGraph defGraph = new TopologyDefGraph();
 
         for (String defLine : input) {
@@ -62,7 +62,7 @@ public class SimpleTopologyDefParser implements ITopologyDefParser {
                 buildDefGraph(matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), defGraph);
 
             } else {
-                throw new InvalidInputException("Input line doesn't match required pattern");
+                throw new PhobosInvalidInputException("Input line doesn't match required pattern");
             }
         }
 

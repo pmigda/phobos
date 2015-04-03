@@ -1,6 +1,6 @@
 package pl.treefrog.phobos.runtime.definition.parser;
 
-import pl.treefrog.phobos.exception.InvalidInputException;
+import pl.treefrog.phobos.exception.PhobosInvalidInputException;
 import pl.treefrog.phobos.runtime.definition.TopologyDefGraph;
 
 import java.io.File;
@@ -15,8 +15,8 @@ import java.util.List;
  */
 public interface ITopologyDefParser {
 
-    TopologyDefGraph parse(File input) throws IOException, InvalidInputException;
+    TopologyDefGraph parse(File input) throws IOException, PhobosInvalidInputException;
 
-    TopologyDefGraph parse(List<String> input) throws InvalidInputException;
+    TopologyDefGraph parse(List<String> input) throws PhobosInvalidInputException;
 
 }

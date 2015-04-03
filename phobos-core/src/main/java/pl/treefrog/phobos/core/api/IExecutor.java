@@ -2,8 +2,8 @@ package pl.treefrog.phobos.core.api;
 
 import pl.treefrog.phobos.core.channel.output.IOutputAgent;
 import pl.treefrog.phobos.core.message.Message;
-import pl.treefrog.phobos.core.state.context.ProcessingContext;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.core.state.context.IProcessingContext;
+import pl.treefrog.phobos.exception.PhobosException;
 
 import java.util.List;
 
@@ -17,9 +17,9 @@ import java.util.List;
 /**
  * Platform plug point for message processing logic
  */
-public interface IExecutor<M extends Message> {
+public interface IExecutor<M extends Message> extends IMessageAware<Message> {
 
-    void processMessage(M message, IOutputAgent outputAgent, ProcessingContext context) throws PlatformException;
+    void processMessage(M message, IOutputAgent outputAgent, IProcessingContext processingContext) throws PhobosException;
 
     List<String> getRequiredChannelsIds();
 

@@ -3,10 +3,15 @@ package pl.treefrog.phobos.core.channel.output;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.treefrog.phobos.core.IComponentLifecycle;
+import pl.treefrog.phobos.core.IProcessingNode;
 import pl.treefrog.phobos.core.channel.AbstractChannelAgent;
+import pl.treefrog.phobos.core.message.ControlHeader;
 import pl.treefrog.phobos.core.message.Message;
-import pl.treefrog.phobos.core.state.context.ProcessingContext;
-import pl.treefrog.phobos.exception.PlatformException;
+import pl.treefrog.phobos.core.message.MessageType;
+import pl.treefrog.phobos.core.message.Payload;
+import pl.treefrog.phobos.core.message.factory.IMessageFactory;
+import pl.treefrog.phobos.core.state.context.IProcessingContext;
+import pl.treefrog.phobos.exception.PhobosException;
 
 /**
  * author  : Piotr Migda (piotr.migda@treefrog.pl)
@@ -17,22 +22,33 @@ import pl.treefrog.phobos.exception.PlatformException;
 public class OutputAgent extends AbstractChannelAgent<OutputChannel> implements IOutputAgent, IComponentLifecycle {
 
     private static final Logger log = LoggerFactory.getLogger(OutputAgent.class);
-    private IOutputAgentPhaseListener agentPhaseListener;
+    private IOutputAgentListener agentPhaseListener;
+    private IMessageFactory messageFactory;
 
     @Override
-    public void sendMessage(String channelId, Message msg, ProcessingContext context) throws PlatformException {
+    public void init(IProcessingNode nodeConfig) throws PhobosException {
+        super.init(nodeConfig);
+
+        messageFactory = nodeConfig.getMessageFactory();
+        if (messageFactory == null) {
+            log.warn("[" + parentProcNode.getNodeName() + "] Output agent has no message factory provided");
+        }
+    }
+
+    @Override
+    public void sendMessage(String channelId, Message message, IProcessingContext processingContext) throws PhobosException {
         IOutputChannel output = channelSet.getChannel(channelId);
 
         if (output != null) {
 
-            if (agentPhaseListener != null) {
-                agentPhaseListener.beforeSendPhase(msg, context);
+            if (agentPhaseListener != null && agentPhaseListener.acceptsMessage(message)) {
+                agentPhaseListener.beforeSendPhase(message, processingContext);
             }
 
-            output.sendMessage(msg);
+            output.sendMessage(message);
 
-            if (agentPhaseListener != null) {
-                agentPhaseListener.afterSendPhase(msg, context);
+            if (agentPhaseListener != null && agentPhaseListener.acceptsMessage(message)) {
+                agentPhaseListener.afterSendPhase(message, processingContext);
             }
 
         } else {
@@ -41,8 +57,13 @@ public class OutputAgent extends AbstractChannelAgent<OutputChannel> implements 
         }
     }
 
+    @Override
+    public <M extends Message<? extends ControlHeader, ? extends Payload>> M createMessage(MessageType messageType, IProcessingContext processingContext) {
+        return messageFactory.createMessage(messageType, processingContext);
+    }
+
     //IoC getters & setters
-    public void setAgentPhaseListener(IOutputAgentPhaseListener agentPhaseListener) {
+    public void setAgentPhaseListener(IOutputAgentListener agentPhaseListener) {
         this.agentPhaseListener = agentPhaseListener;
     }
 
